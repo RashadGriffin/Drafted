@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — Drafted Apparel</title>
+<meta name="description" content="Three illustration styles. One standard. Custom illustrated athlete merch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .shop-hero { margin-top:60px; padding:74px 32px 46px; max-width:1280px; margin-left:auto; margin-right:auto; }
+  .shop-hero p { font-size:15px; color:var(--gray-600); margin-top:14px; max-width:430px; }
+  .grid { max-width:1280px; margin:0 auto; padding:0 32px 100px; display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .pcard { text-decoration:none; color:var(--black); display:block; }
+  .pimg { aspect-ratio:1/1.15; position:relative; }
+  .pimg .glyph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:190px; color:rgba(17,17,17,.05); user-select:none; }
+  .quick { position:absolute; bottom:12px; left:50%; transform:translateX(-50%) translateY(8px); opacity:0; background:#fff; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:9px 22px; box-shadow:0 2px 14px rgba(0,0,0,.12); transition:all .25s; white-space:nowrap; }
+  .pcard:hover .quick { opacity:1; transform:translateX(-50%) translateY(0); }
+  .pinfo { padding:14px 2px 0; }
+  .pname { font-size:15px; font-weight:600; }
+  .pdesc { font-size:13px; color:var(--gray-600); margin:3px 0 6px; line-height:1.5; }
+  .pprice { font-size:14px; font-weight:500; }
+  @media (max-width:960px){ .shop-hero{padding:52px 20px 30px;} .grid{grid-template-columns:1fr;padding:0 20px 70px;} }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/" class="nav-logo">Drafted<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop.html" class="active">Shop</a></li>
+    <li><a href="/how-it-works.html">How It Works</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right"><a href="/shop.html" class="nav-cta">Shop Now</a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/shop.html">Shop</a><a href="/how-it-works.html">How It Works</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
+</div>
+
+<header class="shop-hero" data-stagger>
+  <h1 class="display-xl">Three Styles.<br>One Standard.</h1>
+  <p>Every style is engineered to look incredible with your athlete in it. Pick the one that fits their energy.</p>
+</header>
+
+<main class="grid" data-stagger>
+  <a class="pcard" href="/products/sketch-series.html">
+    <div class="pimg img-zoom"><div class="zoom-inner" style="background:var(--gray-100);"></div><div class="glyph">S</div><div class="quick">Customize It</div></div>
+    <div class="pinfo"><div class="pname">Sketch Series</div><div class="pdesc">Loose line art, color pops, dynamic action poses.</div><div class="pprice">$55</div></div>
+  </a>
+  <a class="pcard" href="/products/pixel-series.html">
+    <div class="pimg img-zoom"><div class="zoom-inner" style="background:var(--gray-100);"></div><div class="glyph">P</div><div class="quick">Customize It</div></div>
+    <div class="pinfo"><div class="pname">Pixel Series</div><div class="pdesc">Clean 8-bit portrait style. Nostalgic energy, premium execution.</div><div class="pprice">$55</div></div>
+  </a>
+  <a class="pcard" href="/products/clean-series.html">
+    <div class="pimg img-zoom"><div class="zoom-inner" style="background:var(--gray-100);"></div><div class="glyph">C</div><div class="quick">Customize It</div></div>
+    <div class="pinfo"><div class="pname">Clean Series</div><div class="pdesc">Minimalist silhouette, oversized number. Bold and refined.</div><div class="pprice">$55</div></div>
+  </a>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-bottom" style="border:none;">
+    <p class="footer-copy">© 2025 Drafted Apparel</p>
+    <div class="footer-legal"><a href="/how-it-works.html">How It Works</a><a href="/contact.html">Contact</a></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drafted Apparel — Premium Illustrated Athlete Merch</title>
+<meta name="description" content="Upload your sports photo, choose your illustration style, and get premium custom athlete merch. Proof in 24 hours. Built for the everyday player.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  /* ---------- HERO ---------- */
+  .hero {
+    margin-top: 60px; position: relative;
+    height: calc(100vh - 60px); min-height: 560px;
+    overflow: hidden; background: var(--gray-100);
+  }
+  .hero-media { position: absolute; inset: -6% 0; background-size: cover; background-position: center top; }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 30%, rgba(255,255,255,.12) 60%, rgba(255,255,255,.85) 82%, rgba(255,255,255,1) 100%);
+  }
+  .hero-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 0 48px 52px; display: flex; align-items: flex-end;
+    justify-content: space-between; gap: 24px;
+    max-width: var(--maxw); margin: 0 auto;
+  }
+  .hero-text { max-width: 560px; }
+  .hero-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(64px, 9vw, 128px); font-weight: 800;
+    line-height: .88; letter-spacing: -.01em; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero-headline em { font-style: normal; color: var(--amber); }
+  .hero-sub { font-size: 15px; line-height: 1.65; color: var(--gray-600); max-width: 400px; margin-bottom: 28px; }
+  .hero-actions { display: flex; gap: 12px; align-items: center; }
+  .hero-series { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; padding-bottom: 4px; flex-shrink: 0; }
+  .series-tab {
+    font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gray-600); text-decoration: none; padding: 6px 14px;
+    border: 1px solid var(--gray-200); background: rgba(255,255,255,.82);
+    backdrop-filter: blur(8px); transition: all .15s; white-space: nowrap;
+  }
+  .series-tab:hover, .series-tab.active { color: var(--black); border-color: var(--black); background: var(--white); }
+
+  /* ---------- GUARANTEE BAR ---------- */
+  .guarantee-bar {
+    background: var(--black); color: var(--white);
+    display: flex; justify-content: center; flex-wrap: wrap;
+    gap: 48px; padding: 18px 32px;
+  }
+  .guarantee-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500; letter-spacing: .02em;
+  }
+  .guarantee-item svg { color: var(--amber); flex-shrink: 0; }
+
+  /* ---------- TRANSFORMATION SLIDER ---------- */
+  .transformation { padding: 88px 48px; max-width: var(--maxw); margin: 0 auto; }
+  .transformation-head { text-align: center; max-width: 580px; margin: 0 auto 48px; }
+  .transformation-head h2 {
+    font-family: 'Barlow Condensed', sans-serif; font-size: clamp(36px, 4vw, 52px);
+    font-weight: 800; text-transform: uppercase; letter-spacing: .02em;
+    line-height: .95; margin-bottom: 16px;
+  }
+  .transformation-head p { font-size: 15px; line-height: 1.7; color: var(--gray-600); }
+  .ba-slider {
+    position: relative; max-width: 860px; margin: 0 auto; aspect-ratio: 16/10;
+    overflow: hidden; user-select: none; background: var(--gray-100); cursor: ew-resize;
+  }
+  .ba-img { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .ba-after { z-index: 1; }
+  .ba-before { z-index: 2; clip-path: inset(0 50% 0 0); }
+  .ba-tag {
+    position: absolute; top: 16px; z-index: 3;
+    font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    background: rgba(17,17,17,.78); color: #fff; padding: 6px 12px; backdrop-filter: blur(4px);
+  }
+  .ba-tag.before { left: 16px; }
+  .ba-tag.after { right: 16px; }
+  .ba-handle {
+    position: absolute; top: 0; bottom: 0; left: 50%; width: 3px;
+    background: var(--white); z-index: 4; transform: translateX(-50%);
+    box-shadow: 0 0 12px rgba(0,0,0,.3); pointer-events: none;
+  }
+  .ba-grip {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 44px; height: 44px; border-radius: 50%; background: var(--white);
+    display: flex; align-items: center; justify-content: center; gap: 3px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.25);
+  }
+  .ba-grip svg { color: var(--black); }
+  .ba-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .ba-ph .ph-note { color: rgba(17,17,17,.32); }
+
+  /* ---------- COLLECTION ---------- */
+  .collection { padding: 24px 48px 88px; max-width: var(--maxw); margin: 0 auto; }
+  .collection-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; }
+  .view-all { font-size: 13px; font-weight: 500; color: var(--gray-600); text-decoration: none; border-bottom: 1px solid var(--gray-400); padding-bottom: 1px; transition: color .15s; }
+  .view-all:hover { color: var(--black); border-color: var(--black); }
+  .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .product-card { text-decoration: none; display: block; color: var(--black); }
+  .product-img { aspect-ratio: 1/1.1; background: var(--gray-100); overflow: hidden; position: relative; margin-bottom: 14px; }
+  .product-img .bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform .4s ease; }
+  .product-card:hover .product-img .bg { transform: scale(1.03); }
+  .product-img-glyph {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 180px; font-weight: 800;
+    color: rgba(17,17,17,.05); line-height: 1; user-select: none;
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .quick-shop {
+    position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%) translateY(6px);
+    opacity: 0; background: var(--white); font-size: 12px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase; padding: 8px 20px; white-space: nowrap;
+    transition: opacity .2s, transform .2s; box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  }
+  .product-card:hover .quick-shop { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .product-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .product-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; margin-bottom: 8px; }
+  .product-price { font-size: 14px; font-weight: 500; }
+
+  /* ---------- EDITORIAL ---------- */
+  .editorial { display: grid; grid-template-columns: 1fr 1fr; min-height: 560px; background: var(--gray-100); }
+  .editorial-img { position: relative; background-size: cover; background-position: center; overflow: hidden; }
+  .editorial-copy { display: flex; flex-direction: column; justify-content: center; padding: 72px 64px; }
+  .editorial-headline { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(40px, 4vw, 58px); font-weight: 800; text-transform: uppercase; line-height: .93; letter-spacing: .01em; margin-bottom: 20px; }
+  .editorial-body { font-size: 15px; line-height: 1.7; color: var(--gray-600); max-width: 380px; margin-bottom: 32px; }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials { padding: 88px 48px; max-width: var(--maxw); margin: 0 auto; text-align: center; }
+  .testimonials h2 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(32px, 3.5vw, 44px); font-weight: 800; text-transform: uppercase; letter-spacing: .03em; margin-bottom: 48px; }
+  .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .testimonial { text-align: left; border-top: 2px solid var(--black); padding-top: 20px; }
+  .testimonial-stars { color: var(--amber); font-size: 14px; letter-spacing: 2px; margin-bottom: 14px; }
+  .testimonial-quote { font-size: 15px; line-height: 1.6; color: var(--black); margin-bottom: 16px; font-weight: 400; }
+  .testimonial-author { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+
+  @media (max-width: 960px) {
+    .hero-content { padding: 0 24px 40px; flex-direction: column; align-items: flex-start; }
+    .hero-series { flex-direction: row; flex-wrap: wrap; }
+    .guarantee-bar { gap: 20px 32px; }
+    .transformation, .collection, .testimonials { padding-left: 24px; padding-right: 24px; }
+    .product-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .editorial { grid-template-columns: 1fr; }
+    .editorial-img { min-height: 320px; }
+    .editorial-copy { padding: 48px 24px; }
+    .testimonial-grid { grid-template-columns: 1fr; gap: 24px; }
+  }
+  @media (max-width: 520px) {
+    .product-grid { grid-template-columns: 1fr; }
+    .hero-series { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <a href="/" class="nav-logo">Drafted<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop.html">Shop</a></li>
+    <li><a href="/how-it-works.html">How It Works</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/shop.html" class="nav-cta">Shop Now</a>
+  </div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/shop.html">Shop</a>
+  <a href="/how-it-works.html">How It Works</a>
+  <a href="/about.html">About</a>
+  <a href="/contact.html">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-media" id="heroMedia" data-parallax="0.12"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-text" data-stagger>
+      <h1 class="hero-headline" id="heroHeadline">Get<br><em>Drafted.</em></h1>
+      <p class="hero-sub" id="heroSub">Upload your sports photo. Choose your style. Get illustrated merch built for you — not a pro team.</p>
+      <div class="hero-actions">
+        <a href="/shop.html" class="btn-primary" id="heroCta">Shop the Collection</a>
+        <a href="/how-it-works.html" class="btn-text">How It Works →</a>
+      </div>
+    </div>
+    <div class="hero-series">
+      <a href="/products/sketch-series.html" class="series-tab active">Sketch Series</a>
+      <a href="/products/pixel-series.html" class="series-tab">Pixel Series</a>
+      <a href="/products/clean-series.html" class="series-tab">Clean Series</a>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE BAR -->
+<div class="guarantee-bar" id="guaranteeBar"></div>
+
+<!-- TRANSFORMATION / BEFORE-AFTER -->
+<section class="transformation">
+  <div class="transformation-head">
+    <div class="eyebrow" id="transEyebrow">The Magic</div>
+    <h2 id="transHeadline">Your photo. Reimagined.</h2>
+    <p id="transBody">Send us a game photo. We turn it into premium illustrated art worthy of the athlete wearing it.</p>
+  </div>
+  <div class="ba-slider" id="baSlider">
+    <div class="ba-img ba-after" id="baAfter">
+      <div class="ba-ph"><div class="ph-note">After — Illustrated version</div></div>
+    </div>
+    <div class="ba-img ba-before" id="baBefore">
+      <div class="ba-ph"><div class="ph-note">Before — Original sports photo</div></div>
+    </div>
+    <div class="ba-tag before">Before</div>
+    <div class="ba-tag after">After</div>
+    <div class="ba-handle" id="baHandle">
+      <div class="ba-grip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="collection" id="collection">
+  <div class="collection-header">
+    <h2 class="section-title reveal">The Collection</h2>
+    <a href="/shop.html" class="view-all reveal d1">View All</a>
+  </div>
+  <div class="product-grid" id="productGrid" data-stagger></div>
+</section>
+
+<!-- EDITORIAL -->
+<section class="editorial">
+  <div class="editorial-img" id="editorialImg">
+    <div class="ph"><div class="ph-note">Lifestyle photo<br>Model in shirt — candid / at a game</div></div>
+  </div>
+  <div class="editorial-copy">
+    <div class="eyebrow" id="edEyebrow">Built Different</div>
+    <h2 class="editorial-headline" id="edHeadline">Pro merch. Finally for everyone else.</h2>
+    <p class="editorial-body" id="edBody"></p>
+    <a href="/how-it-works.html" class="btn-text">See How It Works →</a>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <h2 class="reveal">What Families Are Saying</h2>
+  <div class="testimonial-grid" id="testimonialGrid" data-stagger></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">Drafted<span>.</span></div>
+      <p class="footer-tagline">Premium illustrated athlete merch for the everyday player.</p>
+      <div class="footer-social" id="footerSocial">
+        <a href="#">Instagram</a><a href="#">TikTok</a><a href="#">Facebook</a>
+      </div>
+    </div>
+    <div class="footer-col"><div class="footer-col-label">Shop</div><ul>
+      <li><a href="/products/sketch-series.html">Sketch Series</a></li>
+      <li><a href="/products/pixel-series.html">Pixel Series</a></li>
+      <li><a href="/products/clean-series.html">Clean Series</a></li>
+    </ul></div>
+    <div class="footer-col"><div class="footer-col-label">Info</div><ul>
+      <li><a href="/how-it-works.html">How It Works</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><div class="footer-col-label">Support</div><ul>
+      <li><a href="/contact.html">Order Status</a></li>
+      <li><a href="/how-it-works.html">Shipping Info</a></li>
+      <li><a href="/contact.html">FAQ</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Drafted Apparel. All rights reserved.</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  // ---- Load homepage content from Decap JSON ----
+  fetch('/content/homepage.json')
+    .then(r => r.json())
+    .then(data => {
+      // Hero
+      if (data.hero) {
+        if (data.hero.image) document.getElementById('heroMedia').style.backgroundImage = `url('${data.hero.image}')`;
+        if (data.hero.headline1 || data.hero.headline2)
+          document.getElementById('heroHeadline').innerHTML = `${data.hero.headline1||''}<br><em>${data.hero.headline2||''}</em>`;
+        if (data.hero.subtext) document.getElementById('heroSub').textContent = data.hero.subtext;
+        if (data.hero.ctaText) document.getElementById('heroCta').textContent = data.hero.ctaText;
+      }
+      // Transformation
+      if (data.transformation) {
+        const t = data.transformation;
+        if (t.eyebrow) document.getElementById('transEyebrow').textContent = t.eyebrow;
+        if (t.headline) document.getElementById('transHeadline').textContent = t.headline;
+        if (t.body) document.getElementById('transBody').textContent = t.body;
+        if (t.before) { const el = document.getElementById('baBefore'); el.style.backgroundImage = `url('${t.before}')`; el.querySelector('.ba-ph')?.remove(); }
+        if (t.after)  { const el = document.getElementById('baAfter');  el.style.backgroundImage = `url('${t.after}')`;  el.querySelector('.ba-ph')?.remove(); }
+      }
+      // Products
+      if (data.products) {
+        const grid = document.getElementById('productGrid');
+        const glyphs = ['S','P','C'];
+        grid.innerHTML = data.products.map((p, i) => `
+          <a href="${p.link||'#'}" class="product-card reveal ${i===1?'d1':i===2?'d2':''}">
+            <div class="product-img">
+              ${p.image ? `<div class="bg" style="background-image:url('${p.image}')"></div>` : `<div class="product-img-glyph">${glyphs[i]||''}</div>`}
+              <div class="quick-shop">Quick Shop</div>
+            </div>
+            <div class="product-name">${p.name||''}</div>
+            <div class="product-desc">${p.desc||''}</div>
+            <div class="product-price">${p.price||''}</div>
+          </a>`).join('');
+        bindReveal();
+      }
+      // Editorial
+      if (data.editorial) {
+        const e = data.editorial;
+        if (e.image) { const el = document.getElementById('editorialImg'); el.style.backgroundImage = `url('${e.image}')`; el.querySelector('.ph')?.remove(); }
+        if (e.eyebrow) document.getElementById('edEyebrow').textContent = e.eyebrow;
+        if (e.headline) document.getElementById('edHeadline').textContent = e.headline;
+        if (e.body) document.getElementById('edBody').textContent = e.body;
+      }
+      // Guarantee
+      if (data.guarantee) {
+        const g = data.guarantee;
+        const check = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+        document.getElementById('guaranteeBar').innerHTML =
+          [g.item1,g.item2,g.item3,g.item4].filter(Boolean)
+          .map(t => `<div class="guarantee-item">${check}<span>${t}</span></div>`).join('');
+      }
+      // Testimonials
+      if (data.testimonials) {
+        document.getElementById('testimonialGrid').innerHTML = data.testimonials.map(t => `
+          <div class="testimonial reveal">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">${t.quote||''}</p>
+            <div class="testimonial-author">${t.author||''}</div>
+          </div>`).join('');
+        bindReveal();
+      }
+    })
+    .catch(() => { /* content file missing — defaults stay in place */ });
+
+  // ---- Before/After slider ----
+  (function(){
+    const slider = document.getElementById('baSlider');
+    const before = document.getElementById('baBefore');
+    const handle = document.getElementById('baHandle');
+    let dragging = false;
+    function setPos(x){
+      const r = slider.getBoundingClientRect();
+      let pct = ((x - r.left) / r.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      before.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+      handle.style.left = pct + '%';
+    }
+    slider.addEventListener('mousedown', e => { dragging = true; setPos(e.clientX); });
+    window.addEventListener('mousemove', e => { if(dragging) setPos(e.clientX); });
+    window.addEventListener('mouseup', () => dragging = false);
+    slider.addEventListener('touchstart', e => { dragging = true; setPos(e.touches[0].clientX); }, {passive:true});
+    window.addEventListener('touchmove', e => { if(dragging) setPos(e.touches[0].clientX); }, {passive:true});
+    window.addEventListener('touchend', () => dragging = false);
+  })();
+</script>
+</body>
+</html>

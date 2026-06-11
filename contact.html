@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Drafted Apparel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .contact-wrap { margin-top:60px; max-width:1100px; margin-left:auto; margin-right:auto; padding:80px 32px 100px; display:grid; grid-template-columns:1fr 1fr; gap:64px; }
+  .contact-info p { font-size:15px; color:var(--gray-600); line-height:1.7; margin-top:18px; max-width:380px; }
+  .quick-links { margin-top:34px; }
+  .ql { display:flex; gap:12px; padding:15px 0; border-top:1px solid var(--gray-200); font-size:14px; color:var(--gray-600); align-items:center; }
+  .ql a { color:var(--black); font-weight:500; }
+  .cform { display:flex; flex-direction:column; gap:16px; }
+  .form-ok { display:none; padding:14px 16px; background:rgba(255,149,0,.08); font-size:14px; }
+  @media (max-width:960px){ .contact-wrap{grid-template-columns:1fr; gap:40px; padding:56px 20px 70px;} }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/" class="nav-logo">Drafted<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop.html">Shop</a></li>
+    <li><a href="/how-it-works.html">How It Works</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav-right"><a href="/shop.html" class="nav-cta">Shop Now</a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/shop.html">Shop</a><a href="/how-it-works.html">How It Works</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
+</div>
+
+<main class="contact-wrap">
+  <div data-stagger>
+    <h1 class="display-xl" style="font-size:clamp(44px,6vw,76px);">Talk To Us.</h1>
+    <p>Questions about an order, a proof, team pricing, or anything else — we answer fast.</p>
+    <div class="quick-links">
+      <div class="ql">Checking a proof? <a href="/how-it-works.html">Use the link from your email</a></div>
+      <div class="ql">Team or bulk order? Mention quantity below and we'll sort pricing.</div>
+    </div>
+  </div>
+
+  <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-stagger>
+    <input type="hidden" name="form-name" value="contact">
+    <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+    <div><label class="field-label" for="cname">Name</label><input class="field-input" id="cname" name="name" required></div>
+    <div><label class="field-label" for="cemail">Email</label><input class="field-input" id="cemail" name="email" type="email" required></div>
+    <div><label class="field-label" for="csubject">Subject</label><input class="field-input" id="csubject" name="subject" placeholder="Order question, team pricing…"></div>
+    <div><label class="field-label" for="cmsg">Message</label><textarea class="field-input" id="cmsg" name="message" required></textarea></div>
+    <button class="btn-primary" type="submit" style="align-self:flex-start;padding:15px 36px;">Send Message</button>
+    <div class="form-ok" id="formOk">Got it — we'll get back to you within one business day.</div>
+  </form>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-bottom" style="border:none;">
+    <p class="footer-copy">© 2025 Drafted Apparel</p>
+    <div class="footer-legal"><a href="/shop.html">Shop</a><a href="/how-it-works.html">How It Works</a></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>

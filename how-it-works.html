@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How It Works — Drafted Apparel</title>
+<meta name="description" content="Pay, generate, approve, ship. Custom illustrated athlete merch with proofs in minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .hiw-hero { margin-top:60px; padding:80px 32px 50px; max-width:1100px; margin-left:auto; margin-right:auto; text-align:center; }
+  .hiw-hero p { font-size:15px; color:var(--gray-600); margin-top:16px; max-width:480px; margin-left:auto; margin-right:auto; }
+
+  .timeline { max-width:760px; margin:0 auto; padding:30px 32px 80px; position:relative; }
+  .tl-line { position:absolute; left:calc(32px + 21px); top:40px; bottom:60px; width:2px; background:var(--gray-200); }
+  .tl-fill { position:absolute; left:0; top:0; width:100%; height:0%; background:var(--black); transition:height .15s linear; }
+  .step { display:flex; gap:26px; padding:30px 0; position:relative; }
+  .step-dot { width:44px; height:44px; border-radius:50%; background:#fff; border:2px solid var(--gray-300); display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:17px; flex-shrink:0; transition:all .3s; z-index:1; }
+  .step.lit .step-dot { border-color:var(--black); background:var(--black); color:#fff; }
+  .step h3 { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:24px; letter-spacing:.03em; margin-bottom:8px; }
+  .step p { font-size:14.5px; color:var(--gray-600); line-height:1.65; max-width:480px; }
+  .step .accent { color:var(--amber); font-weight:600; }
+
+  .proof-flow { background:var(--gray-50); border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); padding:76px 32px; }
+  .pf-inner { max-width:1100px; margin:0 auto; }
+  .pf-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:36px; }
+  .pf-card { background:#fff; border:1px solid var(--gray-200); padding:26px; }
+  .pf-card h4 { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:19px; margin:14px 0 8px; }
+  .pf-card p { font-size:13.5px; color:var(--gray-600); line-height:1.6; }
+  .pf-ic { width:40px; height:40px; border:1px solid var(--gray-200); display:flex; align-items:center; justify-content:center; color:var(--amber); }
+
+  .faq { max-width:760px; margin:0 auto; padding:76px 32px 90px; }
+  .faq-item { border-top:1px solid var(--gray-200); }
+  .faq-item:last-child { border-bottom:1px solid var(--gray-200); }
+  .faq-q { width:100%; background:none; border:none; text-align:left; padding:20px 0; font-size:15px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:14px; }
+  .faq-q svg { flex-shrink:0; transition:transform .25s; }
+  .faq-item.open .faq-q svg { transform:rotate(45deg); }
+  .faq-a { max-height:0; overflow:hidden; transition:max-height .35s cubic-bezier(.16,1,.3,1); }
+  .faq-a p { font-size:14px; color:var(--gray-600); line-height:1.7; padding:0 0 20px; max-width:600px; }
+
+  .cta-end { text-align:center; padding:0 32px 100px; }
+  @media (max-width:960px){ .pf-grid{grid-template-columns:1fr;} .hiw-hero{padding:56px 20px 36px;} .timeline{padding:20px 20px 60px;} .tl-line{left:calc(20px + 21px);} }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/" class="nav-logo">Drafted<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop.html">Shop</a></li>
+    <li><a href="/how-it-works.html" class="active">How It Works</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right"><a href="/shop.html" class="nav-cta">Shop Now</a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/shop.html">Shop</a><a href="/how-it-works.html">How It Works</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
+</div>
+
+<header class="hiw-hero" data-stagger>
+  <h1 class="display-xl">Minutes,<br>Not Weeks.</h1>
+  <p>Your custom illustration is generated the moment you order. Here's the whole journey, start to doorstep.</p>
+</header>
+
+<section class="timeline" id="timeline">
+  <div class="tl-line"><div class="tl-fill" id="tlFill"></div></div>
+  <div class="step"><div class="step-dot">1</div><div>
+    <h3>Customize & Pay</h3>
+    <p>Pick a style, choose your garment, add the athlete's name, number, sport, and school — and upload their photo. Checkout is secure via Stripe. <span class="accent">Takes about 2 minutes.</span></p>
+  </div></div>
+  <div class="step"><div class="step-dot">2</div><div>
+    <h3>Your Illustration Generates</h3>
+    <p>The second payment confirms, our system creates your custom illustration in the style you chose, then adds the name, number, and school in clean typography. <span class="accent">Proof in minutes — watch it appear live.</span></p>
+  </div></div>
+  <div class="step"><div class="step-dot">3</div><div>
+    <h3>You Approve</h3>
+    <p>Love it? Approve and it goes to print. Not quite right? Regenerate up to 3 times free. Still not perfect? A real artist steps in and hand-fixes it. <span class="accent">Nothing prints without your yes.</span></p>
+  </div></div>
+  <div class="step"><div class="step-dot">4</div><div>
+    <h3>Printed & Shipped</h3>
+    <p>Your approved design is printed on premium garments and shipped straight to your door with tracking. <span class="accent">Arrives in roughly 7–10 days.</span></p>
+  </div></div>
+</section>
+
+<section class="proof-flow">
+  <div class="pf-inner">
+    <h2 class="section-title reveal">Your Three Options At Proof Time</h2>
+    <div class="pf-grid" data-stagger>
+      <div class="pf-card">
+        <div class="pf-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h4>Approve</h4>
+        <p>One click sends your design straight to production. Most customers approve the first proof.</p>
+      </div>
+      <div class="pf-card">
+        <div class="pf-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+        <h4>Regenerate ×3</h4>
+        <p>Want a different take? Re-roll the illustration up to three times, free, right on the proof page.</p>
+      </div>
+      <div class="pf-card">
+        <div class="pf-ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+        <h4>Manual Touch</h4>
+        <p>After your regenerations, a real artist can hand-fix anything. Tell us exactly what to change — updated proof within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <h2 class="section-title reveal" style="margin-bottom:26px;">Questions, Answered</h2>
+  <div class="faq-item"><button class="faq-q">What kind of photo works best?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <div class="faq-a"><p>Action shots and clear poses work great. Good lighting helps. Game photos, practice shots, even a solid phone photo — if you can see the athlete clearly, we can work with it.</p></div></div>
+  <div class="faq-item"><button class="faq-q">What if I don't like any of the versions?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <div class="faq-a"><p>After your three free regenerations, the manual touch option unlocks — a real artist hand-fixes your design based on your exact notes. You always approve before anything prints.</p></div></div>
+  <div class="faq-item"><button class="faq-q">How do the bulk discounts work?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <div class="faq-a"><p>Order 2–3 of the same design and each shirt drops to $50. Order 4 or more and it's $45 each. Applied automatically at checkout — perfect for families and team gifts.</p></div></div>
+  <div class="faq-item"><button class="faq-q">How long until it arrives?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <div class="faq-a"><p>Proof in minutes. Once you approve, printing and shipping takes roughly 7–10 days, with tracking sent to your email.</p></div></div>
+</section>
+
+<div class="cta-end reveal">
+  <h2 class="display-xl" style="font-size:clamp(44px,6vw,84px);margin-bottom:24px;">Ready?</h2>
+  <a href="/shop.html" class="btn-primary" style="padding:17px 44px;font-size:14px;">Get Drafted →</a>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-bottom" style="border:none;">
+    <p class="footer-copy">© 2025 Drafted Apparel</p>
+    <div class="footer-legal"><a href="/shop.html">Shop</a><a href="/contact.html">Contact</a></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+  // Scroll-drawn timeline + step activation
+  (function(){
+    const tl=document.getElementById('timeline'), fill=document.getElementById('tlFill');
+    const steps=[].slice.call(document.querySelectorAll('.step'));
+    function onScroll(){
+      const r=tl.getBoundingClientRect();
+      const prog=Math.max(0,Math.min(1,(innerHeight*.62 - r.top)/r.height));
+      fill.style.height=(prog*100)+'%';
+      steps.forEach(s=>{ const sr=s.getBoundingClientRect(); s.classList.toggle('lit', sr.top < innerHeight*.62); });
+    }
+    addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  })();
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q=> q.addEventListener('click', function(){
+    const item=this.parentElement, a=item.querySelector('.faq-a'), open=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i=>{ i.classList.remove('open'); i.querySelector('.faq-a').style.maxHeight=0; });
+    if(!open){ item.classList.add('open'); a.style.maxHeight=a.scrollHeight+'px'; }
+  }));
+</script>
+</body>
+</html>

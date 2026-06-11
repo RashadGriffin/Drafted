@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "image": "",
+    "headline1": "Get",
+    "headline2": "Drafted.",
+    "subtext": "Upload your sports photo. Choose your style. Get illustrated merch built for you — not a pro team.",
+    "ctaText": "Shop the Collection"
+  },
+  "transformation": {
+    "eyebrow": "The Magic",
+    "headline": "Your photo. Reimagined.",
+    "body": "Send us a game photo. We turn it into premium illustrated art worthy of the athlete wearing it.",
+    "before": "",
+    "after": ""
+  },
+  "products": [
+    {
+      "name": "Sketch Series",
+      "desc": "Loose line art, color pops, dynamic action poses.",
+      "price": "$55",
+      "image": "",
+      "link": "/products/sketch-series.html"
+    },
+    {
+      "name": "Pixel Series",
+      "desc": "Clean 8-bit portrait style. Nostalgic energy, premium execution.",
+      "price": "$55",
+      "image": "",
+      "link": "/products/pixel-series.html"
+    },
+    {
+      "name": "Clean Series",
+      "desc": "Minimalist silhouette, oversized number. Bold and refined.",
+      "price": "$55",
+      "image": "",
+      "link": "/products/clean-series.html"
+    }
+  ],
+  "editorial": {
+    "image": "",
+    "eyebrow": "Built Different",
+    "headline": "Pro merch. Finally for everyone else.",
+    "body": "Upload your photo, pick your style, and get a custom illustrated jersey worthy of the athlete wearing it. Proof in 24 hours. Ships in 7–10 days."
+  },
+  "guarantee": {
+    "item1": "Proof in 24 hours",
+    "item2": "You approve before we print",
+    "item3": "One free revision",
+    "item4": "Ships in 7–10 days"
+  },
+  "testimonials": [
+    {
+      "quote": "My son lit up when he opened it. It looks like something an NBA player would have. Worth every penny.",
+      "author": "Sarah M., Basketball Mom",
+      "image": ""
+    },
+    {
+      "quote": "Ordered for the whole senior class. The bulk pricing made it easy and the kids are obsessed.",
+      "author": "Coach Daniels, Track & Field",
+      "image": ""
+    },
+    {
+      "quote": "The proof came back in less than a day and looked incredible. Approved it instantly.",
+      "author": "Marcus T., Football Dad",
+      "image": ""
+    }
+  ]
+}

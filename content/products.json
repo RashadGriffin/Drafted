@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "name": "Sketch Series",
+      "slug": "sketch-series",
+      "tagline": "Loose line art with color pops.",
+      "description": "Dynamic action poses rendered in loose, expressive line art with bold color pops. The energy of premium licensed athlete graphics — built around your photo.",
+      "price": "$55",
+      "gallery": []
+    },
+    {
+      "name": "Pixel Series",
+      "slug": "pixel-series",
+      "tagline": "Clean 8-bit portrait style.",
+      "description": "A clean 8-bit pixel portrait with nostalgic energy and premium execution. The retro collectible feel that's been dominating athlete merch — made for you.",
+      "price": "$55",
+      "gallery": []
+    },
+    {
+      "name": "Clean Series",
+      "slug": "clean-series",
+      "tagline": "Minimalist figure, oversized number.",
+      "description": "A minimalist illustrated silhouette set against a large jersey number. Bold, refined, and timeless — the kind of merch that ends up framed on a wall.",
+      "price": "$55",
+      "gallery": []
+    }
+  ]
+}
