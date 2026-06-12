@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drafted — Hero Prototype A · Tasteful Elevation</title>
+<meta name="description" content="Prototype A — refined, premium elevation of the Drafted hero.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PROTOTYPE A — "TASTEFUL ELEVATION"
+   Same Nike/Homage DNA. Pushes craft: refined gold accent ramp,
+   real depth, premium micro-interactions, tighter hierarchy.
+   ============================================================ */
+:root{
+  --white:#FFFFFF; --black:#111111; --ink:#0C0A09;
+  --gray-100:#F5F5F5; --gray-200:#E8E8E8; --gray-300:#D4D4D4;
+  --gray-400:#999; --gray-600:#555;
+  /* Refined accent ramp — warm amber kept as brand, gold added for premium depth */
+  --amber:#FF9500; --amber-600:#E08400; --gold:#C8881C; --gold-deep:#A16207;
+  --maxw:1440px;
+  /* Elevation system (new) */
+  --shadow-sm:0 1px 2px rgba(12,10,9,.06), 0 1px 3px rgba(12,10,9,.08);
+  --shadow-md:0 4px 12px rgba(12,10,9,.10), 0 12px 28px rgba(12,10,9,.10);
+  --shadow-lg:0 12px 32px rgba(12,10,9,.14), 0 24px 60px rgba(12,10,9,.14);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--white);color:var(--black);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* NAV */
+nav{position:fixed;inset:0 0 auto 0;z-index:100;height:60px;display:flex;align-items:center;padding:0 32px;gap:40px;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);
+  border-bottom:1px solid var(--gray-200)}
+.logo{font-family:'Barlow Condensed';font-size:20px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.logo span{color:var(--amber)}
+.nav-links{display:flex;gap:28px;list-style:none;flex:1}
+.nav-links a{font-size:13px;font-weight:500;color:var(--gray-600);transition:color .15s}
+.nav-links a:hover{color:var(--black)}
+.nav-cta{margin-left:auto;font-size:13px;font-weight:600;color:#fff;background:var(--black);padding:9px 20px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:var(--shadow-md)}
+
+/* HERO */
+.hero{margin-top:60px;position:relative;height:calc(100vh - 60px);min-height:600px;overflow:hidden;
+  background:radial-gradient(120% 100% at 80% 0%, #F7F4EF 0%, #F5F5F5 45%, #ECECEC 100%)}
+/* subtle animated grain + light sweep for premium depth */
+.hero::before{content:'';position:absolute;inset:0;opacity:.5;mix-blend-mode:multiply;pointer-events:none;
+  background:radial-gradient(60% 50% at 78% 18%, rgba(200,136,28,.10), transparent 70%)}
+.hero-media{position:absolute;inset:-6% 0;background-size:cover;background-position:center top;
+  background-image:linear-gradient(160deg,#D8D0C4,#B7AE9F)}
+.hero-media::after{content:'PHOTO — athlete, full bleed';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(17,17,17,.28)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0) 28%,rgba(255,255,255,.1) 56%,rgba(255,255,255,.86) 82%,#fff 100%)}
+.hero-content{position:absolute;inset:auto 0 0 0;padding:0 48px 56px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;max-width:var(--maxw);margin:0 auto}
+.hero-text{max-width:720px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:18px}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);position:relative}
+.eyebrow .dot::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:1px solid var(--amber);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{from{transform:scale(.6);opacity:1}to{transform:scale(1.6);opacity:0}}
+.hero-headline{font-family:'Barlow Condensed';font-size:clamp(64px,8.5vw,118px);font-weight:800;line-height:.84;letter-spacing:-.015em;text-transform:uppercase;margin-bottom:18px}
+.hero-headline .line{display:block;overflow:hidden;padding:0 .08em 0 0}
+.hero-headline .line>span{display:block;transform:translateY(105%);animation:riseIn .9s var(--ease) forwards}
+.hero-headline .line:nth-child(2)>span{animation-delay:.12s}
+@keyframes riseIn{to{transform:translateY(0)}}
+.hero-headline em{font-style:normal;position:relative;background:linear-gradient(100deg,var(--amber),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-size:16px;line-height:1.65;color:var(--gray-600);max-width:430px;margin-bottom:30px;opacity:0;animation:fadeUp .8s var(--ease) .45s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero-actions{display:flex;gap:14px;align-items:center;opacity:0;animation:fadeUp .8s var(--ease) .6s forwards}
+.btn-primary{position:relative;font-size:13px;font-weight:600;letter-spacing:.04em;color:#fff;background:var(--black);padding:16px 34px;overflow:hidden;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.25) 50%,transparent 80%);transform:translateX(-120%);transition:transform .6s var(--ease)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.btn-primary:hover::after{transform:translateX(120%)}
+.btn-text{font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:7px;border-bottom:1px solid var(--black);padding-bottom:2px;transition:gap .2s var(--ease),color .15s}
+.btn-text:hover{gap:12px;color:var(--gray-600)}
+.hero-series{display:flex;flex-direction:column;gap:8px;align-items:flex-end;padding-bottom:4px;flex-shrink:0}
+.series-tab{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-600);padding:8px 16px;
+  border:1px solid var(--gray-200);background:rgba(255,255,255,.78);backdrop-filter:blur(8px);transition:all .2s var(--ease)}
+.series-tab:hover,.series-tab.active{color:var(--black);border-color:var(--black);background:#fff;box-shadow:var(--shadow-sm);transform:translateX(-3px)}
+
+/* SOCIAL-PROOF STAT BAND (new — skill recommends social proof) */
+.stats{background:var(--black);color:#fff;display:flex;justify-content:center;flex-wrap:wrap;gap:0;border-top:2px solid var(--amber)}
+.stat{flex:1;min-width:180px;padding:30px 24px;text-align:center;border-right:1px solid rgba(255,255,255,.08)}
+.stat:last-child{border-right:none}
+.stat-num{font-family:'Barlow Condensed';font-size:48px;font-weight:800;line-height:1;letter-spacing:.01em}
+.stat-num em{font-style:normal;color:var(--amber)}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:8px}
+
+.note{max-width:760px;margin:60px auto;padding:0 24px;color:var(--gray-600);font-size:14px;line-height:1.7}
+.note h3{font-family:'Barlow Condensed';text-transform:uppercase;letter-spacing:.04em;color:var(--black);font-size:22px;margin-bottom:10px}
+.note ul{margin:10px 0 0 18px}
+.badge{position:fixed;top:72px;right:16px;z-index:200;background:var(--gold-deep);color:#fff;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 14px;box-shadow:var(--shadow-md)}
+
+@media(max-width:960px){
+  nav{padding:0 20px;gap:16px}.nav-links{display:none}
+  .hero-content{padding:0 24px 40px;flex-direction:column;align-items:flex-start}
+  .hero-series{flex-direction:row;flex-wrap:wrap}
+  .stat{border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}.hero-headline .line>span{transform:none}}
+</style>
+</head>
+<body>
+<div class="badge">Prototype A · Elevation</div>
+<nav>
+  <a href="/" class="logo">Drafted<span>.</span></a>
+  <ul class="nav-links"><li><a href="#">Shop</a></li><li><a href="#">How It Works</a></li><li><a href="#">About</a></li><li><a href="#">Contact</a></li></ul>
+  <a href="#" class="nav-cta">Shop Now</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-media" id="heroMedia" data-parallax="0.10"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="eyebrow"><span class="dot"></span> Now drafting · Season 2025</div>
+      <h1 class="hero-headline"><span class="line"><span>Get</span></span><span class="line"><span><em>Drafted.</em></span></span></h1>
+      <p class="hero-sub">Upload your sports photo. Choose your style. Get illustrated merch built for you — not a pro team.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn-primary">Shop the Collection</a>
+        <a href="#" class="btn-text">How It Works →</a>
+      </div>
+    </div>
+    <div class="hero-series">
+      <a href="#" class="series-tab active">Sketch Series</a>
+      <a href="#" class="series-tab">Pixel Series</a>
+      <a href="#" class="series-tab">Clean Series</a>
+    </div>
+  </div>
+</section>
+
+<!-- NEW: social-proof stat band with animated counters -->
+<div class="stats" id="stats">
+  <div class="stat"><div class="stat-num" data-to="24" data-suffix="h"><em>0</em></div><div class="stat-label">Proof Turnaround</div></div>
+  <div class="stat"><div class="stat-num" data-to="4800" data-suffix="+"><em>0</em></div><div class="stat-label">Athletes Drafted</div></div>
+  <div class="stat"><div class="stat-num" data-to="4.9" data-decimals="1"><em>0</em></div><div class="stat-label">Avg. Rating</div></div>
+  <div class="stat"><div class="stat-num" data-to="1" data-prefix="" data-suffix=" free"><em>0</em></div><div class="stat-label">Revision Included</div></div>
+</div>
+
+<div class="note">
+  <h3>What changed in Prototype A</h3>
+  <p>Same clean Nike/Homage aesthetic — pushed for craft and depth:</p>
+  <ul>
+    <li><b>Kinetic headline</b> — type rises into place line-by-line; "Drafted." carries a subtle amber→gold gradient.</li>
+    <li><b>Refined accent ramp</b> — brand amber kept, plus a deeper gold (#A16207, WCAG-safe) for premium moments.</li>
+    <li><b>Real elevation system</b> — three-tier shadow scale; buttons lift + sheen-sweep on hover (magnetic feel).</li>
+    <li><b>Live "now drafting" eyebrow</b> with a pulsing status dot — urgency + freshness.</li>
+    <li><b>Social-proof stat band</b> with count-up animation — the skill flagged social proof as the missing trust moment.</li>
+    <li><b>Visible focus rings</b> + full reduced-motion fallback (accessibility checklist).</li>
+  </ul>
+</div>
+
+<script>
+// Animated count-up for the stat band
+(function(){
+  var done=false;
+  function run(){
+    if(done)return;done=true;
+    document.querySelectorAll('#stats .stat-num').forEach(function(el){
+      var to=parseFloat(el.getAttribute('data-to')),dec=parseInt(el.getAttribute('data-decimals')||'0'),
+          pre=el.getAttribute('data-prefix')||'',suf=el.getAttribute('data-suffix')||'',em=el.querySelector('em'),
+          t0=performance.now(),dur=1100;
+      function step(t){var p=Math.min(1,(t-t0)/dur);p=1-Math.pow(1-p,3);
+        em.textContent=pre+(to*p).toFixed(dec)+(p===1?suf:'');
+        if(p<1)requestAnimationFrame(step);}
+      requestAnimationFrame(step);
+    });
+  }
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.querySelectorAll('#stats .stat-num').forEach(function(el){
+      el.querySelector('em').textContent=(el.getAttribute('data-prefix')||'')+el.getAttribute('data-to')+(el.getAttribute('data-suffix')||'');});
+  } else {
+    new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)run();});},{threshold:.4})
+      .observe(document.getElementById('stats'));
+  }
+})();
+// Light parallax on hero media
+(function(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var m=document.getElementById('heroMedia');
+  function tick(){var y=window.scrollY;m.style.transform='translateY('+(y*-0.10)+'px) scale(1.08)';requestAnimationFrame(tick);}
+  requestAnimationFrame(tick);})();
+</script>
+</body>
+</html>

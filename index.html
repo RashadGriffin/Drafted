@@ -27,16 +27,38 @@
     justify-content: space-between; gap: 24px;
     max-width: var(--maxw); margin: 0 auto;
   }
-  .hero-text { max-width: 560px; }
+  .hero-text { max-width: 720px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold-deep); margin-bottom: 18px;
+    opacity: 0; animation: fadeUp .7s var(--ease) .2s forwards;
+  }
   .hero-headline {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: clamp(64px, 9vw, 128px); font-weight: 800;
-    line-height: .88; letter-spacing: -.01em; text-transform: uppercase;
-    margin-bottom: 16px;
+    font-size: clamp(64px, 8.5vw, 118px); font-weight: 800;
+    line-height: .84; letter-spacing: -.015em; text-transform: uppercase;
+    margin-bottom: 18px;
   }
-  .hero-headline em { font-style: normal; color: var(--amber); }
-  .hero-sub { font-size: 15px; line-height: 1.65; color: var(--gray-600); max-width: 400px; margin-bottom: 28px; }
-  .hero-actions { display: flex; gap: 12px; align-items: center; }
+  /* kinetic line-rise */
+  .hero-headline .line { display: block; overflow: hidden; padding-right: .08em; }
+  .hero-headline .line > span { display: block; transform: translateY(105%); animation: riseIn .9s var(--ease) forwards; }
+  .hero-headline .line:nth-child(2) > span { animation-delay: .12s; }
+  @keyframes riseIn { to { transform: translateY(0); } }
+  .hero-headline em {
+    font-style: normal;
+    background: linear-gradient(100deg, var(--amber), var(--gold-deep));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub {
+    font-size: 15px; line-height: 1.65; color: var(--gray-600); max-width: 430px; margin-bottom: 28px;
+    opacity: 0; animation: fadeUp .8s var(--ease) .45s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 14px; align-items: center;
+    opacity: 0; animation: fadeUp .8s var(--ease) .6s forwards;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   .hero-series { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; padding-bottom: 4px; flex-shrink: 0; }
   .series-tab {
     font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
@@ -44,19 +66,46 @@
     border: 1px solid var(--gray-200); background: rgba(255,255,255,.82);
     backdrop-filter: blur(8px); transition: all .15s; white-space: nowrap;
   }
-  .series-tab:hover, .series-tab.active { color: var(--black); border-color: var(--black); background: var(--white); }
+  .series-tab:hover, .series-tab.active {
+    color: var(--black); border-color: var(--black); background: var(--white);
+    box-shadow: var(--shadow-sm); transform: translateX(-3px);
+  }
 
-  /* ---------- GUARANTEE BAR ---------- */
-  .guarantee-bar {
+  /* ---------- GUARANTEE TICKER (marquee) ---------- */
+  .ticker {
     background: var(--black); color: var(--white);
-    display: flex; justify-content: center; flex-wrap: wrap;
-    gap: 48px; padding: 18px 32px;
+    border-top: 2px solid var(--amber);
+    overflow: hidden; white-space: nowrap; padding: 15px 0;
   }
-  .guarantee-item {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; font-weight: 500; letter-spacing: .02em;
+  .ticker-track { display: inline-flex; animation: tickerScroll 28s linear infinite; will-change: transform; }
+  .ticker:hover .ticker-track { animation-play-state: paused; }
+  .ticker-group { display: inline-flex; }
+  .ticker-track span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 19px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: rgba(255,255,255,.78);
+    display: inline-flex; align-items: center;
   }
-  .guarantee-item svg { color: var(--amber); flex-shrink: 0; }
+  .ticker-track span::after { content: '●'; color: var(--amber); font-size: 9px; margin: 0 28px; }
+  @keyframes tickerScroll { to { transform: translateX(-50%); } }
+
+  /* ---------- STATS BAND (social proof) ---------- */
+  .stats-band {
+    display: flex; flex-wrap: wrap;
+    max-width: var(--maxw); margin: 0 auto; padding: 0 48px;
+    border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200);
+  }
+  .stat { flex: 1; min-width: 160px; padding: 38px 24px; text-align: center; border-right: 1px solid var(--gray-200); }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 52px; font-weight: 800; line-height: 1; letter-spacing: .01em; color: var(--black);
+  }
+  .stat-num .accent { color: var(--gold-deep); }
+  .stat-label {
+    font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--gray-400); margin-top: 10px;
+  }
 
   /* ---------- TRANSFORMATION SLIDER ---------- */
   .transformation { padding: 88px 48px; max-width: var(--maxw); margin: 0 auto; }
@@ -138,11 +187,23 @@
   .testimonial-quote { font-size: 15px; line-height: 1.6; color: var(--black); margin-bottom: 16px; font-weight: 400; }
   .testimonial-author { font-size: 13px; font-weight: 600; color: var(--gray-600); }
 
+  /* Reduced motion: keep content visible, stop the marquee */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-headline .line > span { transform: none; }
+    .hero-eyebrow, .hero-sub, .hero-actions { opacity: 1; }
+    .ticker-track, .ticker-group { animation: none; flex-wrap: wrap; white-space: normal; justify-content: center; padding: 0 12px; }
+    .ticker-group[aria-hidden="true"] { display: none; }
+  }
+
   @media (max-width: 960px) {
     .hero-content { padding: 0 24px 40px; flex-direction: column; align-items: flex-start; }
     .hero-series { flex-direction: row; flex-wrap: wrap; }
-    .guarantee-bar { gap: 20px 32px; }
     .transformation, .collection, .testimonials { padding-left: 24px; padding-right: 24px; }
+    .stats-band { padding: 0 24px; }
+    .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--gray-200); padding: 28px 16px; }
+    .stat:nth-child(odd) { border-right: 1px solid var(--gray-200); }
+    .stat:nth-last-child(-n+2) { border-bottom: none; }
+    .stat-num { font-size: 42px; }
     .product-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
     .editorial { grid-template-columns: 1fr; }
     .editorial-img { min-height: 320px; }
@@ -185,8 +246,9 @@
   <div class="hero-media" id="heroMedia" data-parallax="0.12"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-text" data-stagger>
-      <h1 class="hero-headline" id="heroHeadline">Get<br><em>Drafted.</em></h1>
+    <div class="hero-text">
+      <div class="hero-eyebrow"><span class="pulse-dot"></span><span id="heroEyebrow">Now Drafting · Season <span id="seasonYear">2026</span></span></div>
+      <h1 class="hero-headline" id="heroHeadline"><span class="line"><span>Get</span></span><span class="line"><span><em>Drafted.</em></span></span></h1>
       <p class="hero-sub" id="heroSub">Upload your sports photo. Choose your style. Get illustrated merch built for you — not a pro team.</p>
       <div class="hero-actions">
         <a href="/shop.html" class="btn-primary" id="heroCta">Shop the Collection</a>
@@ -201,8 +263,17 @@
   </div>
 </section>
 
-<!-- GUARANTEE BAR -->
-<div class="guarantee-bar" id="guaranteeBar"></div>
+<!-- GUARANTEE TICKER -->
+<div class="ticker" aria-label="Our guarantees">
+  <div class="ticker-track" id="tickerTrack">
+    <span class="ticker-group" id="tickerGroup">
+      <span>Proof in 24 hours</span><span>You approve before we print</span><span>One free revision</span><span>Ships in 7–10 days</span>
+    </span>
+    <span class="ticker-group" aria-hidden="true" id="tickerGroupDup">
+      <span>Proof in 24 hours</span><span>You approve before we print</span><span>One free revision</span><span>Ships in 7–10 days</span>
+    </span>
+  </div>
+</div>
 
 <!-- TRANSFORMATION / BEFORE-AFTER -->
 <section class="transformation">
@@ -249,6 +320,14 @@
     <p class="editorial-body" id="edBody"></p>
     <a href="/how-it-works.html" class="btn-text">See How It Works →</a>
   </div>
+</section>
+
+<!-- STATS BAND -->
+<section class="stats-band" id="statsBand">
+  <div class="stat"><div class="stat-num"><span class="num" data-to="24">24</span><span class="accent">h</span></div><div class="stat-label">Proof Turnaround</div></div>
+  <div class="stat"><div class="stat-num"><span class="num" data-to="3">3</span></div><div class="stat-label">Illustration Styles</div></div>
+  <div class="stat"><div class="stat-num"><span class="num" data-to="1">1</span><span class="accent">&nbsp;free</span></div><div class="stat-label">Revision Included</div></div>
+  <div class="stat"><div class="stat-num"><span class="num" data-to="7">7</span><span class="accent">–10</span></div><div class="stat-label">Day Shipping</div></div>
 </section>
 
 <!-- TESTIMONIALS -->
@@ -298,8 +377,12 @@
       // Hero
       if (data.hero) {
         if (data.hero.image) document.getElementById('heroMedia').style.backgroundImage = `url('${data.hero.image}')`;
-        if (data.hero.headline1 || data.hero.headline2)
-          document.getElementById('heroHeadline').innerHTML = `${data.hero.headline1||''}<br><em>${data.hero.headline2||''}</em>`;
+        if (data.hero.eyebrow) document.getElementById('heroEyebrow').textContent = data.hero.eyebrow;
+        const hl = document.getElementById('heroHeadline');
+        if ((data.hero.headline1 || data.hero.headline2) &&
+            hl.textContent.trim() !== `${data.hero.headline1||''}${data.hero.headline2||''}`.trim()) {
+          hl.innerHTML = `<span class="line"><span>${data.hero.headline1||''}</span></span><span class="line"><span><em>${data.hero.headline2||''}</em></span></span>`;
+        }
         if (data.hero.subtext) document.getElementById('heroSub').textContent = data.hero.subtext;
         if (data.hero.ctaText) document.getElementById('heroCta').textContent = data.hero.ctaText;
       }
@@ -336,13 +419,15 @@
         if (e.headline) document.getElementById('edHeadline').textContent = e.headline;
         if (e.body) document.getElementById('edBody').textContent = e.body;
       }
-      // Guarantee
+      // Guarantee ticker
       if (data.guarantee) {
         const g = data.guarantee;
-        const check = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
-        document.getElementById('guaranteeBar').innerHTML =
-          [g.item1,g.item2,g.item3,g.item4].filter(Boolean)
-          .map(t => `<div class="guarantee-item">${check}<span>${t}</span></div>`).join('');
+        const items = [g.item1,g.item2,g.item3,g.item4].filter(Boolean)
+          .map(t => `<span>${t}</span>`).join('');
+        if (items) {
+          document.getElementById('tickerGroup').innerHTML = items;
+          document.getElementById('tickerGroupDup').innerHTML = items;
+        }
       }
       // Testimonials
       if (data.testimonials) {
@@ -376,6 +461,36 @@
     slider.addEventListener('touchstart', e => { dragging = true; setPos(e.touches[0].clientX); }, {passive:true});
     window.addEventListener('touchmove', e => { if(dragging) setPos(e.touches[0].clientX); }, {passive:true});
     window.addEventListener('touchend', () => dragging = false);
+  })();
+
+  // ---- Season year in hero eyebrow ----
+  (function(){
+    const y = document.getElementById('seasonYear');
+    if (y) y.textContent = new Date().getFullYear();
+  })();
+
+  // ---- Stats band count-up ----
+  (function(){
+    const band = document.getElementById('statsBand');
+    if (!band) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; // static values already in markup
+    let done = false;
+    function run(){
+      if (done) return; done = true;
+      band.querySelectorAll('.num').forEach(el => {
+        const to = parseFloat(el.getAttribute('data-to'));
+        const t0 = performance.now(), dur = 1100;
+        function step(t){
+          let p = Math.min(1, (t - t0) / dur); p = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(to * p);
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }
+    new IntersectionObserver((es, obs) => {
+      es.forEach(e => { if (e.isIntersecting) { run(); obs.disconnect(); } });
+    }, { threshold: .4 }).observe(band);
   })();
 </script>
 </body>

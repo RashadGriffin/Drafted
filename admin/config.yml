@@ -31,6 +31,7 @@ collections:
             widget: "object"
             fields:
               - { label: "Hero Image/Video", name: "image", widget: "image", required: false, hint: "Large background. ~2000px wide. Model wearing a shirt." }
+              - { label: "Eyebrow", name: "eyebrow", widget: "string", required: false, hint: "Small label above headline. Leave blank for 'Now Drafting · Season <current year>'." }
               - { label: "Headline Line 1", name: "headline1", widget: "string", default: "Get" }
               - { label: "Headline Line 2 (amber)", name: "headline2", widget: "string", default: "Drafted." }
               - { label: "Subtext", name: "subtext", widget: "text", default: "Upload your sports photo. Choose your style. Get illustrated merch built for you — not a pro team." }
@@ -66,7 +67,7 @@ collections:
               - { label: "Headline", name: "headline", widget: "text", default: "Pro merch. Finally for everyone else." }
               - { label: "Body", name: "body", widget: "text" }
 
-          - label: "Risk Reversal Bar"
+          - label: "Guarantee Ticker (scrolling bar under hero)"
             name: "guarantee"
             widget: "object"
             fields:
