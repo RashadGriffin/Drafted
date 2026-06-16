@@ -235,6 +235,16 @@ function buildPrompt(style, order) {
       if (hint) p += ' ' + hint;
     } catch (_) { /* color module optional */ }
   }
+  // Customer revision request (from the proof page "Regenerate" feedback).
+  // Applies only to the regeneration it was submitted for. Phrased as a
+  // targeted revision so the model adjusts rather than starting over.
+  const fb = (order.regen_feedback || '').trim();
+  if (fb) {
+    p += ' IMPORTANT REVISION REQUEST from the customer for this new version — ' +
+         'apply these changes while keeping everything else faithful to the original photo: ' +
+         fb;
+  }
+
   return p;
 }
 

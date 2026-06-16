@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Drafted — Owner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --black:#111; --amber:#FF9500; --g100:#f5f5f5; --g200:#e8e8e8; --g300:#d6d6d6; --g400:#9a9a9a; --g600:#555; --red:#c0392b; --green:#1e7e34; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',sans-serif; color:var(--black); background:#fafafa; padding:24px; max-width:1100px; margin:0 auto; }
+  h1{ font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; letter-spacing:.01em; text-transform:uppercase; }
+  h1 .dot{ color:var(--amber); }
+  .sub{ color:var(--g600); font-size:14px; margin:4px 0 22px; }
+  .gate{ max-width:420px; margin:60px auto; border:1px solid var(--g200); padding:28px; background:#fff; }
+  .gate h2{ font-family:'Barlow Condensed',sans-serif; font-weight:700; text-transform:uppercase; font-size:22px; margin-bottom:6px; }
+  .gate p{ font-size:13px; color:var(--g600); margin-bottom:16px; }
+  label{ font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--g400); display:block; margin-bottom:6px; }
+  input{ width:100%; font-family:'Inter',sans-serif; font-size:15px; padding:12px 14px; border:1px solid var(--g300); border-radius:6px; }
+  input:focus{ outline:none; border-color:var(--black); }
+  button{ font-family:'Inter',sans-serif; cursor:pointer; border:none; border-radius:6px; font-weight:600; }
+  .btn{ background:var(--black); color:#fff; padding:12px 18px; font-size:14px; }
+  .btn:hover{ opacity:.9; }
+  .btn-sm{ padding:7px 13px; font-size:13px; }
+  .btn-refund{ background:#fff; color:var(--red); border:1px solid var(--g300); }
+  .btn-refund:hover{ border-color:var(--red); }
+  .btn-ghost{ background:#fff; color:var(--black); border:1px solid var(--g300); }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+  .hidden{ display:none; }
+  table{ width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--g200); font-size:13.5px; }
+  th{ text-align:left; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--g400); padding:11px 12px; border-bottom:1px solid var(--g200); white-space:nowrap; }
+  td{ padding:11px 12px; border-bottom:1px solid var(--g100); vertical-align:middle; }
+  tr:last-child td{ border-bottom:none; }
+  .pill{ display:inline-block; font-size:11px; font-weight:600; padding:3px 9px; border-radius:99px; text-transform:capitalize; }
+  .pill.paid{ background:#e7f5ec; color:var(--green); }
+  .pill.pending_payment{ background:var(--g100); color:var(--g600); }
+  .pill.proof_ready,.pill.generating,.pill.regenerating{ background:#fff3e0; color:#b76e00; }
+  .pill.approved{ background:#e7f0ff; color:#1657c8; }
+  .pill.manual_requested{ background:#fde8ef; color:#b3236a; }
+  .pill.refunded{ background:#f0e7ff; color:#6b2fb3; }
+  .who{ font-weight:600; }
+  .email{ color:var(--g600); font-size:12px; }
+  .muted{ color:var(--g400); }
+  .err{ color:var(--red); font-size:13px; margin:10px 0; min-height:18px; }
+  .row-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  a.link{ color:var(--black); text-decoration:underline; font-size:13px; }
+  .count{ font-size:12px; color:var(--g400); }
+</style>
+</head>
+<body>
+
+  <!-- GATE -->
+  <div class="gate" id="gate">
+    <h2>Owner Access</h2>
+    <p>Enter the owner secret to view orders. This stays in your browser only.</p>
+    <label for="secret">Owner secret</label>
+    <input type="password" id="secret" placeholder="••••••••••••" autocomplete="off">
+    <div class="err" id="gateErr"></div>
+    <button class="btn" id="enterBtn" style="width:100%; margin-top:8px;">Open Dashboard</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hidden">
+    <div class="topbar">
+      <div>
+        <h1>Drafted<span class="dot">.</span> Orders</h1>
+        <div class="sub">Recent orders · refund a customer when they reach out</div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-ghost btn-sm" id="refreshBtn">Refresh</button>
+        <button class="btn-ghost btn-sm" id="logoutBtn">Lock</button>
+      </div>
+    </div>
+    <div class="err" id="dashErr"></div>
+    <div class="count" id="count"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>When</th><th>Athlete</th><th>Style</th><th>Status</th>
+          <th>Regens</th><th>Total</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  let SECRET = sessionStorage.getItem('drafted_owner_secret') || '';
+
+  function fmtMoney(c){ return '$' + ((c||0)/100).toFixed(2); }
+  function fmtDate(s){ try{ const d=new Date(s); return d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); }catch(e){ return s||''; } }
+  function styleName(k){ return (k||'').replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
+
+  async function api(path, body){
+    const r = await fetch('/api/'+path, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-owner-secret': SECRET },
+      body: JSON.stringify(body||{}),
+    });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(j.error || ('Request failed ('+r.status+')'));
+    return j;
+  }
+
+  function statusPill(o){
+    const s = o.refunded ? 'refunded' : (o.status||'');
+    return '<span class="pill '+s+'">'+s.replace(/_/g,' ')+'</span>';
+  }
+
+  function render(orders){
+    $('count').textContent = orders.length + ' order' + (orders.length===1?'':'s');
+    $('rows').innerHTML = orders.map(o => {
+      const canRefund = o.paid && !o.refunded && o.status!=='refunded';
+      const proofLink = o.proof_token ? '<a class="link" href="/proof.html?token='+encodeURIComponent(o.proof_token)+'" target="_blank">proof</a>' : '';
+      return '<tr>'+
+        '<td class="muted">'+fmtDate(o.created_at)+'</td>'+
+        '<td><div class="who">'+(o.athlete_name||'—')+'</div><div class="email">'+(o.customer_email||'')+'</div></td>'+
+        '<td>'+styleName(o.style_key)+'</td>'+
+        '<td>'+statusPill(o)+'</td>'+
+        '<td class="muted">'+(o.regen_count||0)+' / '+(o.regen_limit||3)+'</td>'+
+        '<td>'+fmtMoney(o.total_cents)+'</td>'+
+        '<td><div class="row-actions">'+proofLink+
+          (canRefund ? '<button class="btn-refund btn-sm" data-id="'+o.id+'" data-who="'+(o.athlete_name||'')+'">Refund</button>' : '')+
+        '</div></td>'+
+      '</tr>';
+    }).join('');
+
+    document.querySelectorAll('.btn-refund').forEach(b =>
+      b.addEventListener('click', ()=> doRefund(b.getAttribute('data-id'), b.getAttribute('data-who'), b)));
+  }
+
+  async function load(){
+    $('dashErr').textContent='';
+    try {
+      const { orders } = await api('owner-orders', { limit: 100 });
+      render(orders || []);
+    } catch(e){
+      if(/unauthor/i.test(e.message)){ lock(); $('gateErr').textContent='That secret was not accepted.'; }
+      else $('dashErr').textContent = e.message;
+    }
+  }
+
+  async function doRefund(id, who, btn){
+    if(!confirm('Refund this order'+(who?(' for '+who):'')+'? This issues a real Stripe refund and cannot be undone.')) return;
+    btn.disabled=true; btn.textContent='Refunding…';
+    try {
+      const r = await api('owner-refund', { orderId:id });
+      btn.textContent = r.alreadyRefunded ? 'Already refunded' : 'Refunded ✓';
+      await load();
+    } catch(e){
+      $('dashErr').textContent = e.message;
+      btn.disabled=false; btn.textContent='Refund';
+    }
+  }
+
+  function openDash(){ $('gate').classList.add('hidden'); $('dash').classList.remove('hidden'); load(); }
+  function lock(){ SECRET=''; sessionStorage.removeItem('drafted_owner_secret'); $('dash').classList.add('hidden'); $('gate').classList.remove('hidden'); }
+
+  $('enterBtn').addEventListener('click', async ()=>{
+    const v = $('secret').value.trim();
+    if(!v){ $('gateErr').textContent='Enter the secret.'; return; }
+    SECRET = v; $('gateErr').textContent='';
+    try {
+      await api('owner-orders', { limit: 1 });   // validate secret
+      sessionStorage.setItem('drafted_owner_secret', v);
+      $('secret').value='';
+      openDash();
+    } catch(e){
+      $('gateErr').textContent = /unauthor/i.test(e.message) ? 'That secret was not accepted.' : e.message;
+      SECRET='';
+    }
+  });
+  $('secret').addEventListener('keydown', e=>{ if(e.key==='Enter') $('enterBtn').click(); });
+  $('refreshBtn').addEventListener('click', load);
+  $('logoutBtn').addEventListener('click', lock);
+
+  // Auto-open if a secret is already in this tab's session.
+  if(SECRET) openDash();
+</script>
+</body>
+</html>

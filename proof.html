@@ -23,6 +23,26 @@
   .gen-wrap { max-width:560px; margin:0 auto; }
   .gen-canvas { aspect-ratio:1; }
   .gen-status { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:22px; font-size:14px; font-weight:500; color:var(--gray-600); }
+  .gen-progress { max-width:560px; margin:22px auto 0; height:6px; background:var(--gray-200); border-radius:99px; overflow:hidden; }
+  .gen-progress-fill { height:100%; width:0%; background:var(--black); border-radius:99px; transition:width .4s cubic-bezier(.16,1,.3,1); }
+  .regen-panel { max-width:560px; margin:22px auto 0; border:1px solid var(--gray-200); padding:24px; display:none; }
+  .regen-panel.open { display:block; animation:panelIn .4s cubic-bezier(.16,1,.3,1); }
+  .regen-head { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:20px; letter-spacing:.02em; }
+  .regen-sub { font-size:13px; color:var(--gray-600); margin:4px 0 16px; }
+  .manual-warn { background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:14px 16px; font-size:13px; line-height:1.5; color:#7c4a03; margin-bottom:18px; }
+  .chips { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:16px; }
+  .chip { font-family:'Inter',sans-serif; font-size:13px; font-weight:500; padding:9px 15px; border:1px solid var(--gray-300); background:#fff; border-radius:99px; cursor:pointer; transition:all .15s; color:var(--gray-700,#333); }
+  .chip:hover { border-color:var(--black); }
+  .chip.on { background:var(--black); color:#fff; border-color:var(--black); }
+  /* version history strip */
+  .history-wrap { max-width:560px; margin:20px auto 0; }
+  .history-label { font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--gray-400); margin-bottom:10px; text-align:center; }
+  .history-strip { display:flex; gap:10px; overflow-x:auto; padding:4px; -webkit-overflow-scrolling:touch; }
+  .hist-item { flex:0 0 auto; width:88px; cursor:pointer; text-align:center; }
+  .hist-thumb { width:88px; height:88px; object-fit:cover; border:2px solid var(--gray-200); border-radius:6px; transition:border-color .15s; background:var(--gray-100); }
+  .hist-item.active .hist-thumb { border-color:var(--black); }
+  .hist-cap { font-size:10.5px; line-height:1.25; color:var(--gray-600); margin-top:5px; max-height:28px; overflow:hidden; }
+  .hist-item.active .hist-cap { color:var(--black); font-weight:600; }
   .gen-sub { text-align:center; font-size:13px; color:var(--gray-400); margin-top:8px; }
 
   /* proof view */
@@ -83,6 +103,7 @@
     </div>
     <div class="gen-wrap">
       <div class="gen-canvas shimmer"></div>
+      <div class="gen-progress"><div class="gen-progress-fill" id="genBar"></div></div>
       <div class="gen-status"><span class="pulse-dot"></span><span id="genMsg">Warming up the studio…</span></div>
       <div class="gen-sub">This usually takes under a minute. Don't close this page — your proof will appear right here.</div>
     </div>
@@ -98,20 +119,49 @@
       <div class="attempt-badge" id="attemptBadge">Proof 1</div>
       <img id="proofImg" alt="Your custom illustration proof">
     </div>
+
+    <!-- VERSION HISTORY: every version stays selectable -->
+    <div class="history-wrap hidden" id="historyWrap">
+      <div class="history-label">Your versions — tap to choose</div>
+      <div class="history-strip" id="historyStrip"></div>
+    </div>
     <div class="actions">
       <button class="btn-primary btn-lg" id="btnApprove">Approve — Send to Print ✓</button>
       <button class="btn-ghost-d" id="btnRegen">Regenerate <span class="left" id="regenLeft"></span></button>
-      <button class="btn-ghost-d" id="btnManual" disabled>Request Manual Touch</button>
+      <button class="btn-ghost-d hidden" id="btnManual">Request a Hand-Finish</button>
     </div>
-    <div class="lock-note" id="lockNote">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Manual touch by our artist unlocks after all 3 regenerations
+
+    <!-- REGENERATE PANEL: faithful preset tweaks only (no free text) -->
+    <div class="regen-panel" id="regenPanel">
+      <div class="regen-head">What should we change?</div>
+      <div class="regen-sub">Tap <strong>as many as you like</strong> — they'll all be applied together. Or just hit regenerate for a fresh take. Every option stays true to your original photo.</div>
+      <div class="chips" id="regenChips">
+        <button class="chip" data-fb="Match the team and uniform colors more accurately to the original photo.">Truer colors</button>
+        <button class="chip" data-fb="Lighten the uniform slightly while keeping it accurate to the photo.">Lighten uniform</button>
+        <button class="chip" data-fb="Darken the uniform slightly while keeping it accurate to the photo.">Darken uniform</button>
+        <button class="chip" data-fb="Render the jersey number and team lettering crisply and accurately.">Sharper number &amp; text</button>
+        <button class="chip" data-fb="Make the face look more like the person in the original photo.">Better likeness</button>
+        <button class="chip" data-fb="Simplify the face with cleaner, smoother features.">Cleaner face</button>
+        <button class="chip" data-fb="Show more of the body for a fuller view of the subject, keeping the same pose.">Fuller view</button>
+        <button class="chip" data-fb="Make the illustration bolder and higher-contrast.">Bolder look</button>
+        <button class="chip" data-fb="Make it cleaner and less busy, with less visual clutter.">Cleaner</button>
+        <button class="chip" data-fb="Make it more polished and refined overall.">More polished</button>
+      </div>
+      <div class="actions" style="margin-top:14px; justify-content:flex-start;">
+        <button class="btn-primary" id="btnRegenGo">Regenerate <span class="left" id="regenLeft2"></span></button>
+        <button class="btn-ghost-d" id="btnRegenCancel">Cancel</button>
+      </div>
     </div>
+
     <div class="manual-panel" id="manualPanel">
+      <div class="manual-warn">
+        <strong>Heads up — this is the slow route.</strong>
+        A hand-finish is done manually by our team and takes much longer — up to <strong>48 hours</strong> — versus the instant automated versions above. Most fixes are faster if you try the regeneration options first. Only use this if those couldn't get it right.
+      </div>
       <label class="field-label" for="manualDesc">Tell us exactly what to fix</label>
-      <textarea class="field-input" id="manualDesc" placeholder="e.g. The jersey should be navy, and the pose should face left like the photo…"></textarea>
+      <textarea class="field-input" id="manualDesc" placeholder="e.g. The jersey should be navy, not royal blue, to match the photo…"></textarea>
       <div class="actions" style="margin-top:16px; justify-content:flex-start;">
-        <button class="btn-primary" id="btnManualSend">Send to Our Artist</button>
+        <button class="btn-primary" id="btnManualSend">Send to Our Team — Up to 48h</button>
         <button class="btn-ghost-d" id="btnManualCancel">Cancel</button>
       </div>
     </div>
@@ -172,9 +222,22 @@
   if(!token){ $('errorMsg').textContent='This link is missing its access token.'; show('vError'); return; }
 
   const GEN_MSGS = ['Studying your athlete…','Sketching the pose…','Laying down the style…','Adding the finishing touches…','Almost there…'];
-  let genIdx = 0, genTimer = null, pollTimer = null, state = null;
+  let genIdx = 0, genTimer = null, pollTimer = null, barTimer = null, barPct = 0, state = null, selectedId = null;
 
   function rotateMsg(){ $('genMsg').textContent = GEN_MSGS[genIdx % GEN_MSGS.length]; genIdx++; }
+
+  // Animated progress bar: eases toward 90% while we wait, snaps to 100% when ready.
+  function startBar(){
+    barPct = 0; if($('genBar')) $('genBar').style.width = '0%';
+    if(barTimer) return;
+    barTimer = setInterval(()=>{
+      // approach 90% asymptotically so it always feels like it's moving
+      barPct += Math.max(0.5, (90 - barPct) * 0.06);
+      if(barPct > 90) barPct = 90;
+      if($('genBar')) $('genBar').style.width = barPct.toFixed(1)+'%';
+    }, 320);
+  }
+  function finishBar(){ if($('genBar')) $('genBar').style.width='100%'; }
 
   function meta(el, s){
     el.innerHTML = '<span><b>'+(s.athleteName||'Athlete')+(s.jerseyNumber?' #'+s.jerseyNumber:'')+'</b></span>'+
@@ -196,27 +259,75 @@
     if(s.generating || !s.proof){
       meta($('metaGen'), s); show('vGenerating');
       if(!genTimer){ rotateMsg(); genTimer=setInterval(rotateMsg, 4200); }
+      startBar();
       if(!pollTimer){ pollTimer=setInterval(poll, 3500); }
       return;
     }
 
     // proof ready
+    finishBar();
     stopTimers();
     meta($('metaProof'), s);
-    $('proofImg').src = s.proof.url;
-    const total = 1 + (s.regenLimit||3);
-    $('attemptBadge').textContent = s.proof.kind==='manual' ? 'Artist Touched' : 'Proof '+s.proof.attemptNo+' of '+total;
-    $('attemptBadge').classList.toggle('manual', s.proof.kind==='manual');
+
+    const hist = s.history || (s.proof ? [s.proof] : []);
+    // Default selection: keep current pick if still present, else newest.
+    if(!selectedId || !hist.some(h => h.id === selectedId)) {
+      selectedId = (s.proof && s.proof.id) || (hist[0] && hist[0].id) || null;
+    }
+    renderHistory(hist, s);
+    showSelected(hist, s);
+
     const left = (s.regenLimit||3) - (s.regenCount||0);
     $('regenLeft').textContent = '· '+left+' left';
+    if($('regenLeft2')) $('regenLeft2').textContent = '· '+left+' left';
     $('btnRegen').disabled = left<=0;
-    $('btnManual').disabled = !s.manualUnlocked;
-    $('lockNote').style.display = s.manualUnlocked ? 'none' : 'flex';
+    // Only reveal the hand-finish option once regenerations are used up.
+    $('btnManual').classList.toggle('hidden', !s.manualUnlocked);
     show('vProof');
     requestAnimationFrame(()=> $('proofCard').classList.add('show'));
   }
 
-  function stopTimers(){ clearInterval(genTimer); clearInterval(pollTimer); genTimer=pollTimer=null; }
+  // Friendly label for a version: its feedback, or Original / Proof N.
+  function versionLabel(h, total){
+    if(h.kind === 'manual') return 'Hand-finished';
+    if(h.attemptNo === 1) return 'Original';
+    if(h.feedback){
+      let t = h.feedback.replace(/\s+/g,' ').trim();
+      if(t.length > 38) t = t.slice(0,36)+'…';
+      return t;
+    }
+    return 'Proof '+h.attemptNo;
+  }
+
+  function renderHistory(hist, s){
+    const strip = $('historyStrip');
+    if(!hist || hist.length <= 1){ $('historyWrap').classList.add('hidden'); strip.innerHTML=''; return; }
+    $('historyWrap').classList.remove('hidden');
+    const total = 1 + (s.regenLimit||3);
+    strip.innerHTML = '';
+    // show oldest -> newest so "Original" reads first
+    [...hist].reverse().forEach(h => {
+      const item = document.createElement('div');
+      item.className = 'hist-item' + (h.id===selectedId ? ' active' : '');
+      item.innerHTML =
+        '<img class="hist-thumb" src="'+(h.url||'')+'" alt="">'+
+        '<div class="hist-cap">'+versionLabel(h, total).replace(/</g,'&lt;')+'</div>';
+      item.addEventListener('click', ()=>{ selectedId = h.id; renderHistory(hist, s); showSelected(hist, s); });
+      strip.appendChild(item);
+    });
+  }
+
+  function showSelected(hist, s){
+    const total = 1 + (s.regenLimit||3);
+    const sel = (hist||[]).find(h => h.id===selectedId) || (hist||[])[0];
+    if(!sel) return;
+    $('proofImg').src = sel.url;
+    $('attemptBadge').textContent = sel.kind==='manual' ? 'Hand-Finished'
+      : (sel.attemptNo===1 ? 'Original' : 'Proof '+sel.attemptNo+' of '+total);
+    $('attemptBadge').classList.toggle('manual', sel.kind==='manual');
+  }
+
+  function stopTimers(){ clearInterval(genTimer); clearInterval(pollTimer); clearInterval(barTimer); genTimer=pollTimer=barTimer=null; }
 
   async function poll(){
     try { const s = await fetchState(); if(!s.generating && s.proof) render(s); else if(['approved','manual_requested'].includes(s.status)) render(s); }
@@ -233,18 +344,57 @@
 
   $('btnApprove').addEventListener('click', async function(){
     this.disabled=true; this.textContent='Approving…'; $('errProof').textContent='';
-    try { await action('approve'); render(Object.assign({},state,{status:'approved'})); }
+    try { await action('approve', selectedId ? { proofId: selectedId } : null); render(Object.assign({},state,{status:'approved'})); }
     catch(e){ $('errProof').textContent=e.message; this.disabled=false; this.textContent='Approve — Send to Print ✓'; }
   });
 
-  $('btnRegen').addEventListener('click', async function(){
-    this.disabled=true; $('errProof').textContent='';
+  // Regenerate now opens the feedback panel first.
+  $('btnRegen').addEventListener('click', function(){
+    if(this.disabled) return;
+    $('manualPanel').classList.remove('open');
+    $('regenPanel').classList.toggle('open');
+  });
+  $('btnRegenCancel').addEventListener('click', ()=> $('regenPanel').classList.remove('open'));
+
+  // Chip toggles — show a live count so multi-select is obvious
+  document.querySelectorAll('#regenChips .chip').forEach(c =>
+    c.addEventListener('click', ()=>{ c.classList.toggle('on'); updateRegenCount(); }));
+
+  function updateRegenCount(){
+    const n = document.querySelectorAll('#regenChips .chip.on').length;
+    const btn = $('btnRegenGo');
+    const left = $('regenLeft2') ? $('regenLeft2').outerHTML : '';
+    btn.innerHTML = (n>0 ? 'Regenerate with '+n+' change'+(n===1?'':'s')+' ' : 'Regenerate ') +
+      '<span class="left" id="regenLeft2">'+($('regenLeft2')?$('regenLeft2').textContent:'')+'</span>';
+  }
+
+  function collectFeedback(){
+    const picked = [].slice.call(document.querySelectorAll('#regenChips .chip.on'))
+      .map(c => c.getAttribute('data-fb'));
+    return picked.join(' ');
+  }
+
+  async function doRegenerate(feedback){
+    $('regenPanel').classList.remove('open');
+    $('errProof').textContent='';
     $('proofCard').classList.remove('show');
     show('vGenerating'); meta($('metaGen'), state);
-    genIdx=0; rotateMsg(); genTimer=setInterval(rotateMsg,4200);
-    try { await action('regenerate'); const s=await fetchState(); render(s); }
+    genIdx=0; rotateMsg(); genTimer=setInterval(rotateMsg,4200); startBar();
+    if(!pollTimer) pollTimer=setInterval(poll,3500);
+    try {
+      await action('regenerate', feedback ? { feedback } : null);
+      selectedId = null; // after a regen, jump to the newest version
+      const s=await fetchState(); render(s);
+    }
     catch(e){ const s=await fetchState().catch(()=>state); render(s); $('errProof').textContent=e.message; }
-    finally { this.disabled=false; }
+  }
+
+  $('btnRegenGo').addEventListener('click', function(){
+    // reset chips after submitting so the next round starts clean
+    const fb = collectFeedback();
+    document.querySelectorAll('#regenChips .chip.on').forEach(c=>c.classList.remove('on'));
+    updateRegenCount();
+    doRegenerate(fb);
   });
 
   $('btnManual').addEventListener('click', ()=> $('manualPanel').classList.add('open'));
@@ -254,7 +404,7 @@
     if(desc.length<5){ $('errProof').textContent='Please describe what needs fixing.'; return; }
     this.disabled=true; this.textContent='Sending…'; $('errProof').textContent='';
     try { await action('manual',{description:desc}); show('vManual'); }
-    catch(e){ $('errProof').textContent=e.message; this.disabled=false; this.textContent='Send to Our Artist'; }
+    catch(e){ $('errProof').textContent=e.message; this.disabled=false; this.textContent='Send to Our Team — Up to 48h'; }
   });
 
   // boot

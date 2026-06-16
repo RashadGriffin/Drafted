@@ -13,18 +13,29 @@ exports.handler = async (event) => {
   if (!order) return json(404, { error: 'Order not found' });
 
   const { data: proofs } = await supa().from('proofs')
-    .select('id, attempt_no, kind, status, composited_path, created_at')
+    .select('id, attempt_no, kind, status, composited_path, feedback, created_at')
     .eq('order_id', order.id)
     .order('created_at', { ascending: false });
 
-  const latestReady = (proofs || []).find(p => p.status === 'ready');
+  const readyProofs = (proofs || []).filter(p => p.status === 'ready');
+  const latestReady = readyProofs[0] || null;
   const generating =
     ['generating', 'regenerating'].includes(order.status) ||
     (order.status === 'paid' && !latestReady);
 
-  let proofUrl = null;
-  if (latestReady && latestReady.composited_path) {
-    proofUrl = await signedUrl(BUCKETS.proofs, latestReady.composited_path, 3600);
+  // Sign every ready proof so the customer can browse their full history.
+  // (1 + regen_limit attempts max — a small list.)
+  const history = [];
+  for (const p of readyProofs) {
+    const url = p.composited_path
+      ? await signedUrl(BUCKETS.proofs, p.composited_path, 3600) : null;
+    history.push({
+      id: p.id,
+      attemptNo: p.attempt_no,
+      kind: p.kind,
+      feedback: p.feedback || null,
+      url,
+    });
   }
 
   return json(200, {
@@ -37,13 +48,17 @@ exports.handler = async (event) => {
     regenCount: order.regen_count,
     regenLimit: order.regen_limit,
     manualUnlocked: order.manual_unlocked,
+    approvedProofId: order.approved_proof_id || null,
     generating,
+    // latest (kept for back-compat with the generating->ready transition)
     proof: latestReady ? {
       id: latestReady.id,
       attemptNo: latestReady.attempt_no,
       kind: latestReady.kind,
-      url: proofUrl,
+      url: history.find(h => h.id === latestReady.id)?.url || null,
     } : null,
+    // full browsable history (newest first)
+    history,
     attempts: (proofs || []).map(p => ({ attemptNo: p.attempt_no, kind: p.kind, status: p.status })),
   });
 };

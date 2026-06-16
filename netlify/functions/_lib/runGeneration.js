@@ -97,6 +97,7 @@ async function runGeneration(orderId, { trigger = 'initial' } = {}) {
       raw_image_path: rawPath,
       composited_path: compositedPath,
       print_file_path: printPath,
+      feedback: trigger === 'regen' ? (order.regen_feedback || null) : null,
       status: 'ready',
     }).eq('id', proof.id);
 

@@ -14,6 +14,7 @@ const Stripe = require('stripe');
 const { supa } = require('./_lib/supabase.js');
 const { quote } = require('./_lib/pricing.js');
 const { getStyle } = require('../../config/styles.js');
+const { REGEN_LIMIT } = require('../../config/settings.js');
 
 const json = (statusCode, body) => ({
   statusCode,
@@ -72,6 +73,7 @@ exports.handler = async (event) => {
         quantity: q,
         unit_price_cents: unitCents,
         total_cents: totalCents,
+        regen_limit: REGEN_LIMIT,
         status: 'pending_payment',
       })
       .select()
