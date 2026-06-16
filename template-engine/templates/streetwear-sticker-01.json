@@ -1,0 +1,71 @@
+{
+  "templateId": "streetwear-sticker-01",
+  "name": "Streetwear Sticker",
+  "canvas": {
+    "width": 4500,
+    "height": 5400
+  },
+  "background": "transparent",
+  "safeZones": {
+    "subjectSafeZone": {
+      "x": 450,
+      "y": 450,
+      "width": 3600,
+      "height": 4050
+    },
+    "nameSafeZone": {
+      "x": 450,
+      "y": 4650,
+      "width": 3600,
+      "height": 500
+    },
+    "printBleed": {
+      "inset": 150
+    }
+  },
+  "sticker": {
+    "whiteOutlinePx": 90,
+    "blackContourPx": 40,
+    "dropShadow": {
+      "blur": 40,
+      "opacity": 0.28,
+      "dy": 30
+    }
+  },
+  "fields": [
+    "subjectImage",
+    "firstName",
+    "lastName",
+    "number",
+    "primaryColor",
+    "secondaryColor"
+  ],
+  "text": {
+    "lastName": {
+      "font": "Arial Black",
+      "weight": 900,
+      "maxSize": 360,
+      "case": "upper",
+      "fill": "{{textColor}}",
+      "outline": "{{outlineColor}}",
+      "outlinePx": 14,
+      "letterSpacing": 8
+    },
+    "number": {
+      "font": "Arial Black",
+      "weight": 900,
+      "size": 300,
+      "fill": "{{primaryColor}}",
+      "outline": "#ffffff",
+      "outlinePx": 10,
+      "position": "name_left"
+    }
+  },
+  "layerOrder": [
+    "dropShadow",
+    "blackContour",
+    "whiteOutline",
+    "subject",
+    "nameplate"
+  ]
+}

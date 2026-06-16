@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Head — Drafted Apparel</title>
+<meta name="description" content="A clean 2D comic-style illustration with a modern arcade-game feel — the head playfully enlarged in classic 'big head mode' while the face stays realistic and mature. Bold outlines, smooth cel shading, apparel-ready.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .pdp { max-width: 1280px; margin: 60px auto 0; padding: 28px 32px 90px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; }
+  .crumbs { grid-column: 1/-1; font-size: 12px; color: var(--gray-400); }
+  .crumbs a { color: var(--gray-600); text-decoration: none; }
+  .crumbs a:hover { color: var(--black); }
+
+  /* gallery */
+  .gallery { position: sticky; top: 84px; align-self: start; }
+  .g-main { aspect-ratio: 1/1.08; background: var(--gray-100); position: relative; overflow: hidden; }
+  .g-main .glyph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:240px; color:rgba(17,17,17,.05); user-select:none; }
+  .g-main .ph-note { position:absolute; inset:auto 0 18px; }
+  .g-thumbs { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px; }
+  .g-thumb { aspect-ratio:1; background:var(--gray-100); cursor:pointer; border:1px solid transparent; transition:border-color .15s; position:relative; }
+  .g-thumb.active { border-color: var(--black); }
+  .g-thumb span { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:rgba(17,17,17,.25); text-align:center; padding:4px; }
+
+  /* info */
+  .series-tag { font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--amber); margin-bottom:10px; }
+  .pdp-title { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:clamp(40px,4.5vw,58px); line-height:.9; margin-bottom:10px; }
+  .pdp-desc { font-size:14.5px; color:var(--gray-600); line-height:1.65; margin:14px 0 6px; max-width:430px; }
+  .price-line { display:flex; align-items:baseline; gap:10px; margin:18px 0 6px; }
+  .price-big { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; }
+  .tier-badge { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); background:rgba(255,149,0,.1); padding:4px 10px; display:none; }
+  .tier-badge.show { display:inline-block; animation:panelIn .3s ease; }
+  @keyframes panelIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+  .opt { margin-top: 26px; }
+  .opt-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .opt-val { font-size:12px; color:var(--gray-400); }
+
+  .customize { margin-top:34px; padding-top:30px; border-top:1px solid var(--gray-200); }
+  .cz-title { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:22px; letter-spacing:.03em; margin-bottom:4px; }
+  .cz-sub { font-size:13px; color:var(--gray-600); margin-bottom:20px; }
+  .cz-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .cz-grid .full { grid-column:1/-1; }
+
+  .bulk { margin-top:30px; border:1px solid var(--gray-200); }
+  .bulk-row { display:grid; grid-template-columns:1.2fr 1fr 1fr; font-size:13px; }
+  .bulk-row > div { padding:11px 16px; border-bottom:1px solid var(--gray-200); }
+  .bulk-row:last-child > div { border-bottom:none; }
+  .bulk-row.head > div { font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--gray-400); background:var(--gray-50); }
+  .bulk-row.active > div { background:rgba(255,149,0,.07); font-weight:600; }
+  .bulk-note { font-size:11.5px; color:var(--gray-400); margin-top:8px; }
+
+  .cta-zone { margin-top:30px; }
+  .cta-pay { width:100%; padding:18px; font-size:15px; letter-spacing:.03em; position:relative; overflow:hidden; }
+  .cta-pay .shine { position:absolute; inset:0; background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%); transform:translateX(-100%); animation:shimmer 2.8s ease infinite; }
+  .cta-micro { text-align:center; font-size:12.5px; color:var(--gray-600); margin-top:10px; display:flex; align-items:center; justify-content:center; gap:7px; }
+  .trust-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:22px; }
+  .trust { font-size:11.5px; color:var(--gray-600); display:flex; gap:7px; align-items:flex-start; line-height:1.45; }
+  .trust svg { color:var(--amber); flex-shrink:0; margin-top:1px; }
+
+  .more { max-width:1280px; margin:0 auto; padding:0 32px 90px; }
+  .more-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:22px; }
+  .more-card { display:block; text-decoration:none; color:var(--black); }
+  .more-img { aspect-ratio:16/9; background:var(--gray-100); position:relative; overflow:hidden; }
+  .more-img .glyph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:120px; color:rgba(17,17,17,.05); }
+
+  .sticky-cta { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--gray-200); padding:12px 16px; display:none; z-index:90; }
+  .sticky-cta .btn-primary { width:100%; padding:15px; }
+
+  @media (max-width: 960px) {
+    .pdp { grid-template-columns:1fr; gap:30px; padding:18px 20px 120px; }
+    .gallery { position:static; }
+    .cz-grid { grid-template-columns:1fr; }
+    .sticky-cta { display:block; }
+    .trust-row { grid-template-columns:1fr; }
+    .more { padding:0 20px 70px; }
+    .more-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/" class="nav-logo">Drafted<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop.html" class="active">Shop</a></li>
+    <li><a href="/how-it-works.html">How It Works</a></li>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right"><a href="/shop.html" class="nav-cta">Shop Now</a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/shop.html">Shop</a><a href="/how-it-works.html">How It Works</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
+</div>
+
+<main class="pdp">
+  <div class="crumbs reveal"><a href="/shop.html">Shop</a> / Big Head</div>
+
+  <section class="gallery reveal">
+    <div class="g-main img-zoom"><div class="zoom-inner" style="background-image:url('/assets/placeholders/product-big-head.jpg')"></div>
+      <div class="ph-note" style="opacity:.5;">Placeholder — swap with real Big Head mockup</div>
+    </div>
+    <div class="g-thumbs">
+      <div class="g-thumb active"><span>Front</span></div>
+      <div class="g-thumb"><span>Detail</span></div>
+      <div class="g-thumb"><span>On model</span></div>
+      <div class="g-thumb"><span>Lifestyle</span></div>
+    </div>
+  </section>
+
+  <section data-stagger>
+    <div class="series-tag">Drafted Apparel</div>
+    <h1 class="pdp-title">Big Head</h1>
+    <div class="price-line">
+      <span class="price-big">$<span id="unitPrice">55.00</span></span>
+      <span style="font-size:13px;color:var(--gray-400);">per shirt</span>
+      <span class="tier-badge" id="tierBadge"></span>
+    </div>
+    <p class="pdp-desc">A clean 2D comic-style illustration with a modern arcade-game feel — the head playfully enlarged in classic 'big head mode' while the face stays realistic and mature. Bold outlines, smooth cel shading, apparel-ready.</p>
+
+    <div class="opt">
+      <div class="opt-head"><span class="field-label" style="margin:0;">Color</span><span class="opt-val" id="colorVal">Black</span></div>
+      <div class="dot-row" id="colorRow">
+        <div class="dot active" data-color="Black" style="background:#1A1A1A;" title="Black"></div><div class="dot" data-color="White" style="background:#F5F5F5;" title="White"></div><div class="dot" data-color="Navy" style="background:#1B2540;" title="Navy"></div><div class="dot" data-color="Sand" style="background:#D8CDB8;" title="Sand"></div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="field-label" style="margin:0;">Size</span><span class="opt-val">Youth & adult</span></div>
+      <div class="chip-row" id="sizeRow">
+        <div class="chip" data-size="YS">YS</div><div class="chip" data-size="YM">YM</div><div class="chip" data-size="YL">YL</div><div class="chip" data-size="S">S</div><div class="chip active" data-size="M">M</div><div class="chip" data-size="L">L</div><div class="chip" data-size="XL">XL</div><div class="chip" data-size="2XL">2XL</div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="field-label" style="margin:0;">Garment</span></div>
+      <div class="chip-row">
+        <div class="chip active">T-Shirt · $55</div>
+        <div class="chip" style="opacity:.45;cursor:not-allowed;" title="Coming soon">Hoodie · Soon</div>
+      </div>
+    </div>
+
+    <div class="opt">
+      <div class="opt-head"><span class="field-label" style="margin:0;">Quantity</span><span class="opt-val">Same design discounts</span></div>
+      <div class="qty">
+        <button type="button" id="qMinus">−</button>
+        <input id="qtyInput" value="1" inputmode="numeric">
+        <button type="button" id="qPlus">+</button>
+      </div>
+    </div>
+
+    <div class="bulk" id="bulkTable">
+      <div class="bulk-row head"><div>Quantity</div><div>Per shirt</div><div>You save</div></div>
+      <div class="bulk-row" data-tier="1"><div>1 shirt</div><div>$55</div><div>—</div></div>
+      <div class="bulk-row" data-tier="2"><div>2–3 shirts</div><div>$50</div><div>$5 each</div></div>
+      <div class="bulk-row" data-tier="4"><div>4+ shirts</div><div>$45</div><div>$10 each</div></div>
+    </div>
+    <div class="bulk-note">Same style + same design only. Discount applied automatically at checkout.</div>
+
+    <div class="customize">
+      <div class="cz-title">Make It Theirs</div>
+      <div class="cz-sub">This is what we illustrate. Takes about a minute.</div>
+      <div class="cz-grid">
+        <div><label class="field-label" for="fName">Athlete name *</label><input class="field-input" id="fName" maxlength="18" placeholder="Jordan Wells"></div>
+        <div><label class="field-label" for="fNumber">Jersey number</label><input class="field-input" id="fNumber" maxlength="2" inputmode="numeric" placeholder="23"></div>
+        <div><label class="field-label" for="fSport">Sport *</label><input class="field-input" id="fSport" maxlength="24" placeholder="Basketball"></div>
+        <div><label class="field-label" for="fSchool">School / team</label><input class="field-input" id="fSchool" maxlength="28" placeholder="Phoenix Central High"></div>
+        <div class="full"><label class="field-label" for="fEmail">Your email * <span style="font-weight:400;text-transform:none;letter-spacing:0;">(proof link goes here)</span></label><input class="field-input" id="fEmail" type="email" placeholder="you@email.com"></div>
+        <div class="full">
+          <label class="field-label">Their sports photo *</label>
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/heic" style="display:none;">
+            <img class="preview" id="filePreview" style="display:none;">
+            <div id="dzText"><b style="font-weight:600;">Upload their photo</b><br><span style="font-size:12px;color:var(--gray-400);">Action shots work great · JPG, PNG, WEBP, HEIC</span></div>
+            <div class="upload-bar" id="uploadBar"><div class="fill" id="uploadFill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-zone">
+      <button class="btn-primary cta-pay" id="btnPay"><span class="shine"></span>Pay & Generate My Illustration → $<span id="totalPrice">55.00</span></button>
+      <div class="cta-micro">
+        <span class="pulse-dot" style="width:7px;height:7px;"></span>
+        Proof delivered within minutes — you approve before anything prints
+      </div>
+      <div class="trust-row">
+        <div class="trust"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Approve before we print — nothing ships without your yes</div>
+        <div class="trust"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Up to 3 free regenerations until it's right</div>
+        <div class="trust"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Ships in 7–10 days with tracking</div>
+      </div>
+      <div class="err" id="payErr" style="text-align:left;color:#B00020;font-size:13px;margin-top:12px;min-height:18px;"></div>
+    </div>
+  </section>
+</main>
+
+<section class="more">
+  <h2 class="section-title reveal">Other Styles</h2>
+  <div class="more-grid" data-stagger>
+    <a class="more-card" href="/products/streetwear-sticker.html">
+      <div class="more-img img-zoom"><div class="zoom-inner" style="background-image:url('/assets/placeholders/product-streetwear-sticker.jpg')"></div></div>
+      <div style="margin-top:10px;font-weight:600;font-size:15px;">Streetwear Sticker</div>
+      <div style="font-size:13px;color:var(--gray-600);">Bold die-cut sticker look.</div>
+    </a><a class="more-card" href="/products/minimal.html">
+      <div class="more-img img-zoom"><div class="zoom-inner" style="background-image:url('/assets/placeholders/product-minimal.jpg')"></div></div>
+      <div style="margin-top:10px;font-weight:600;font-size:15px;">Minimal</div>
+      <div style="font-size:13px;color:var(--gray-600);">Minimalist flat vector.</div>
+    </a>
+  </div>
+</section>
+
+<div class="sticky-cta"><button class="btn-primary" id="btnPayMobile">Pay & Generate → $<span id="totalPriceM">55.00</span></button></div>
+
+<footer class="site-footer">
+  <div class="footer-bottom" style="border:none;">
+    <p class="footer-copy">© 2025 Drafted Apparel</p>
+    <div class="footer-legal"><a href="/how-it-works.html">How It Works</a><a href="/contact.html">Contact</a></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+<script>
+(function(){
+  const STYLE_KEY = 'big-head';
+  const TIERS = [{min:1,unit:55},{min:2,unit:50},{min:4,unit:45}];
+  const $ = id => document.getElementById(id);
+  let qty = 1, photoPath = null, uploading = false;
+
+  function tierFor(q){ let t=TIERS[0]; for(const x of TIERS) if(q>=x.min) t=x; return t; }
+  function refresh(){
+    const t = tierFor(qty);
+    tickTo($('unitPrice'), t.unit, '', 2);
+    tickTo($('totalPrice'), t.unit*qty, '', 2);
+    tickTo($('totalPriceM'), t.unit*qty, '', 2);
+    document.querySelectorAll('#bulkTable .bulk-row[data-tier]').forEach(r=>{
+      r.classList.toggle('active', Number(r.dataset.tier)===t.min);
+    });
+    const save = (55-t.unit)*qty;
+    const badge = $('tierBadge');
+    if(save>0){ badge.textContent='Bulk price — saving $'+save; badge.classList.add('show'); }
+    else badge.classList.remove('show');
+    $('qtyInput').value = qty;
+  }
+  $('qMinus').onclick = ()=>{ qty=Math.max(1,qty-1); refresh(); };
+  $('qPlus').onclick = ()=>{ qty=Math.min(50,qty+1); refresh(); };
+  $('qtyInput').addEventListener('change', e=>{ qty=Math.max(1,Math.min(50,parseInt(e.target.value)||1)); refresh(); });
+
+  // selectors
+  document.querySelectorAll('#colorRow .dot').forEach(d=> d.onclick=()=>{
+    document.querySelectorAll('#colorRow .dot').forEach(x=>x.classList.remove('active'));
+    d.classList.add('active'); $('colorVal').textContent=d.dataset.color;
+  });
+  document.querySelectorAll('#sizeRow .chip').forEach(c=> c.onclick=()=>{
+    document.querySelectorAll('#sizeRow .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+  });
+
+  // photo upload — direct to Supabase via signed URL
+  const dz=$('dropzone'), fi=$('fileInput');
+  dz.onclick=()=>fi.click();
+  dz.ondragover=e=>{e.preventDefault();dz.classList.add('drag');};
+  dz.ondragleave=()=>dz.classList.remove('drag');
+  dz.ondrop=e=>{e.preventDefault();dz.classList.remove('drag'); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);};
+  fi.onchange=()=>{ if(fi.files[0]) handleFile(fi.files[0]); };
+
+  async function handleFile(file){
+    if(file.size > 15*1024*1024){ $('payErr').textContent='Photo must be under 15MB.'; return; }
+    uploading=true; $('payErr').textContent='';
+    $('uploadBar').style.display='block'; $('uploadFill').style.width='12%';
+    const rd=new FileReader(); rd.onload=e=>{ $('filePreview').src=e.target.result; $('filePreview').style.display='block'; $('dzText').innerHTML='<span style="font-size:12px;color:var(--gray-400);">Uploading…</span>'; };
+    rd.readAsDataURL(file);
+    try {
+      const r = await fetch('/api/get-upload-url',{method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({filename:file.name, contentType:file.type||'image/jpeg'})});
+      const j = await r.json(); if(!r.ok) throw new Error(j.error||'Upload failed');
+      $('uploadFill').style.width='45%';
+      const up = await fetch(j.signedUrl,{method:'PUT',headers:{'Content-Type':file.type||'image/jpeg'},body:file});
+      if(!up.ok) throw new Error('Upload failed — try a different photo');
+      photoPath=j.path; $('uploadFill').style.width='100%';
+      $('dzText').innerHTML='<b style="font-weight:600;color:var(--black);">✓ Photo ready</b><br><span style="font-size:12px;color:var(--gray-400);">Click to change</span>';
+    } catch(e){ $('payErr').textContent=e.message; $('uploadBar').style.display='none'; photoPath=null; }
+    finally { uploading=false; }
+  }
+
+  // checkout
+  async function pay(btn){
+    $('payErr').textContent='';
+    const name=$('fName').value.trim(), sport=$('fSport').value.trim(), email=$('fEmail').value.trim();
+    if(!name) return err('Add the athlete\'s name.');
+    if(!sport) return err('What sport do they play?');
+    if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)) return err('Enter a valid email — your proof link goes there.');
+    if(uploading) return err('Hold on — photo is still uploading.');
+    if(!photoPath) return err('Upload their sports photo first.');
+    function err(m){ $('payErr').textContent=m; return null; }
+
+    btn.disabled=true; const orig=btn.innerHTML; btn.innerHTML='Opening secure checkout…';
+    try {
+      const r = await fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          styleKey: STYLE_KEY, garmentType:'tshirt',
+          garmentColor: document.querySelector('#colorRow .dot.active').dataset.color,
+          garmentSize: document.querySelector('#sizeRow .chip.active').dataset.size,
+          athleteName:name, jerseyNumber:$('fNumber').value.trim(),
+          sport, schoolTeam:$('fSchool').value.trim(),
+          sourcePhotoPath: photoPath, quantity: qty, customerEmail: email,
+        })});
+      const j = await r.json(); if(!r.ok) throw new Error(j.error||'Checkout failed');
+      location.href = j.url;
+    } catch(e){ $('payErr').textContent=e.message; btn.disabled=false; btn.innerHTML=orig; }
+  }
+  $('btnPay').onclick = function(){ pay(this); };
+  $('btnPayMobile').onclick = function(){ pay(this); };
+
+  refresh();
+})();
+</script>
+</body>
+</html>

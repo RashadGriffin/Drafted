@@ -1,0 +1,68 @@
+{
+  "hero": {
+    "image": "/assets/placeholders/hero.jpg",
+    "headline1": "Get",
+    "headline2": "Drafted.",
+    "subtext": "Upload your sports photo. Choose your style. Get illustrated merch built for you \u2014 not a pro team.",
+    "ctaText": "Shop the Collection"
+  },
+  "transformation": {
+    "eyebrow": "The Magic",
+    "headline": "Your photo. Reimagined.",
+    "body": "Send us a game photo. We turn it into premium illustrated art worthy of the athlete wearing it.",
+    "before": "/assets/placeholders/before.jpg",
+    "after": "/assets/placeholders/after.jpg"
+  },
+  "products": [
+    {
+      "name": "Streetwear Sticker",
+      "description": "Bold die-cut sticker look with a thick white outline.",
+      "image": "/assets/placeholders/product-streetwear-sticker.jpg",
+      "href": "/products/streetwear-sticker.html",
+      "price": "$55"
+    },
+    {
+      "name": "Big Head",
+      "description": "Arcade big-head mode with a clean, realistic face.",
+      "image": "/assets/placeholders/product-big-head.jpg",
+      "href": "/products/big-head.html",
+      "price": "$55"
+    },
+    {
+      "name": "Minimal",
+      "description": "Minimalist flat vector, clean graphic-poster feel.",
+      "image": "/assets/placeholders/product-minimal.jpg",
+      "href": "/products/minimal.html",
+      "price": "$55"
+    }
+  ],
+  "editorial": {
+    "image": "/assets/placeholders/lifestyle.jpg",
+    "eyebrow": "Built Different",
+    "headline": "Pro merch. Finally for everyone else.",
+    "body": "Upload your photo, pick your style, and get a custom illustrated jersey worthy of the athlete wearing it. Proof in 24 hours. Ships in 7\u201310 days."
+  },
+  "guarantee": {
+    "item1": "Proof in 24 hours",
+    "item2": "You approve before we print",
+    "item3": "One free revision",
+    "item4": "Ships in 7\u201310 days"
+  },
+  "testimonials": [
+    {
+      "quote": "My son lit up when he opened it. It looks like something an NBA player would have. Worth every penny.",
+      "author": "Sarah M., Basketball Mom",
+      "image": ""
+    },
+    {
+      "quote": "Ordered for the whole senior class. The bulk pricing made it easy and the kids are obsessed.",
+      "author": "Coach Daniels, Track & Field",
+      "image": ""
+    },
+    {
+      "quote": "The proof came back in less than a day and looked incredible. Approved it instantly.",
+      "author": "Marcus T., Football Dad",
+      "image": ""
+    }
+  ]
+}

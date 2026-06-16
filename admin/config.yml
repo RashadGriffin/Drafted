@@ -1,0 +1,118 @@
+# ===========================================================
+# DRAFTED APPAREL — Decap CMS Configuration
+# Edits commit to GitHub; Netlify rebuilds automatically.
+# ===========================================================
+
+backend:
+  name: git-gateway
+  branch: main   # change if your default branch is named differently
+
+# Where uploaded images go
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+# Friendly editor UI
+site_url: https://draftedapparel.com
+display_url: https://draftedapparel.com
+logo_url: https://draftedapparel.com/assets/logo.png
+
+collections:
+  # ---------------- HOMEPAGE ----------------
+  - name: "homepage"
+    label: "Homepage"
+    files:
+      - file: "content/homepage.json"
+        label: "Homepage Content"
+        name: "homepage"
+        format: "json"
+        fields:
+          - label: "Hero"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Hero Image/Video", name: "image", widget: "image", required: false, hint: "Large background. ~2000px wide. Model wearing a shirt." }
+              - { label: "Headline Line 1", name: "headline1", widget: "string", default: "Get" }
+              - { label: "Headline Line 2 (amber)", name: "headline2", widget: "string", default: "Drafted." }
+              - { label: "Subtext", name: "subtext", widget: "text", default: "Upload your sports photo. Choose your style. Get illustrated merch built for you — not a pro team." }
+              - { label: "Primary Button Text", name: "ctaText", widget: "string", default: "Shop the Collection" }
+
+          - label: "Before / After Slider"
+            name: "transformation"
+            widget: "object"
+            fields:
+              - { label: "Section Eyebrow", name: "eyebrow", widget: "string", default: "The Magic" }
+              - { label: "Section Headline", name: "headline", widget: "string", default: "Your photo. Reimagined." }
+              - { label: "Section Body", name: "body", widget: "text", required: false, default: "Send us a game photo. We turn it into premium illustrated art worthy of the athlete wearing it." }
+              - { label: "Before Image (real photo)", name: "before", widget: "image", required: false, hint: "The original sports photo." }
+              - { label: "After Image (illustrated)", name: "after", widget: "image", required: false, hint: "The finished illustrated version." }
+
+          - label: "Products"
+            name: "products"
+            widget: "list"
+            max: 3
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Description", name: "desc", widget: "string" }
+              - { label: "Price", name: "price", widget: "string", default: "$55" }
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Link", name: "link", widget: "string", hint: "e.g. /products/sketch-series.html" }
+
+          - label: "Editorial / Lifestyle Break"
+            name: "editorial"
+            widget: "object"
+            fields:
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Eyebrow", name: "eyebrow", widget: "string", default: "Built Different" }
+              - { label: "Headline", name: "headline", widget: "text", default: "Pro merch. Finally for everyone else." }
+              - { label: "Body", name: "body", widget: "text" }
+
+          - label: "Risk Reversal Bar"
+            name: "guarantee"
+            widget: "object"
+            fields:
+              - { label: "Item 1", name: "item1", widget: "string", default: "Proof in 24 hours" }
+              - { label: "Item 2", name: "item2", widget: "string", default: "You approve before we print" }
+              - { label: "Item 3", name: "item3", widget: "string", default: "One free revision" }
+              - { label: "Item 4", name: "item4", widget: "string", default: "Ships in 7–10 days" }
+
+          - label: "Testimonials"
+            name: "testimonials"
+            widget: "list"
+            fields:
+              - { label: "Quote", name: "quote", widget: "text" }
+              - { label: "Author", name: "author", widget: "string", hint: "e.g. Sarah M., Volleyball Mom" }
+              - { label: "Photo (optional)", name: "image", widget: "image", required: false }
+
+  # ---------------- PRODUCTS (shared data) ----------------
+  - name: "products"
+    label: "Products"
+    files:
+      - file: "content/products.json"
+        label: "All Products"
+        name: "products"
+        format: "json"
+        fields:
+          - label: "Products"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Name", name: "name", widget: "string" }
+              - { label: "Slug", name: "slug", widget: "string", hint: "sketch-series" }
+              - { label: "Tagline", name: "tagline", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text" }
+              - { label: "Price (t-shirt)", name: "price", widget: "string", default: "$55" }
+              - { label: "Gallery Images", name: "gallery", widget: "list", field: { label: "Image", name: "image", widget: "image", required: false } }
+
+  # ---------------- TESTIMONIALS (global pool) ----------------
+  - name: "site"
+    label: "Site Settings"
+    files:
+      - file: "content/site.json"
+        label: "Global Settings"
+        name: "site"
+        format: "json"
+        fields:
+          - { label: "Instagram URL", name: "instagram", widget: "string", required: false }
+          - { label: "TikTok URL", name: "tiktok", widget: "string", required: false }
+          - { label: "Facebook URL", name: "facebook", widget: "string", required: false }
+          - { label: "Contact Email", name: "email", widget: "string", default: "hello@draftedapparel.com" }

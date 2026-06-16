@@ -1,0 +1,31 @@
+# Netlify configuration — Drafted Apparel
+
+[build]
+  publish = "."
+
+# Decap CMS uses Netlify Identity + Git Gateway.
+# Enable both in: Netlify dashboard → Site settings.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Pretty URLs — allow /shop instead of /shop.html if desired
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+# API routes -> Netlify Functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["sharp"]
+  included_files = ["config/styles.js"]

@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "name": "Streetwear Sticker",
+      "slug": "streetwear-sticker",
+      "tagline": "Bold die-cut sticker look.",
+      "description": "A premium streetwear sticker-style illustration with a thick white outline and bold black contour. The most versatile, reliable style — single athletes, groups, and family photos.",
+      "price": "$55",
+      "gallery": []
+    },
+    {
+      "name": "Big Head",
+      "slug": "big-head",
+      "tagline": "Arcade big-head mode.",
+      "description": "A clean 2D comic-style illustration with a modern arcade-game feel — the head playfully enlarged while the face stays realistic and recognizable. Bold outlines, smooth cel shading.",
+      "price": "$55",
+      "gallery": []
+    },
+    {
+      "name": "Minimal",
+      "slug": "minimal",
+      "tagline": "Minimalist flat vector.",
+      "description": "A minimalist flat-vector sports illustration with solid color blocking and a clean graphic-poster feel. Simple, bold, and built to reproduce consistently.",
+      "price": "$55",
+      "gallery": []
+    }
+  ]
+}

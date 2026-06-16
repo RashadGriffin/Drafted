@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Drafted Apparel</title>
+<meta name="description" content="Premium illustrated athlete merch for the everyday player. Built for the 98% who grind.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+  .about-hero { margin-top:60px; padding:96px 32px 70px; max-width:1100px; margin-left:auto; margin-right:auto; }
+  .about-hero .display-xl em { font-style:normal; color:var(--amber); }
+  .lede { font-size:18px; line-height:1.7; color:var(--gray-600); max-width:560px; margin-top:26px; }
+
+  .img-break { height:54vh; min-height:340px; overflow:hidden; position:relative; background:var(--gray-100); }
+  .img-break .media { position:absolute; inset:-12%; background:linear-gradient(150deg,#D8D0C4,#B8B0A4); background-size:cover; background-position:center; }
+  .img-break .note { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:rgba(17,17,17,.25); }
+
+  .story { max-width:680px; margin:0 auto; padding:80px 32px; }
+  .story h2 { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:30px; margin:38px 0 14px; }
+  .story h2:first-child { margin-top:0; }
+  .story p { font-size:15.5px; line-height:1.8; color:var(--gray-600); margin-bottom:18px; }
+  .story b { color:var(--black); font-weight:600; }
+
+  .values { background:var(--black); color:#fff; padding:80px 32px; }
+  .values-inner { max-width:1100px; margin:0 auto; }
+  .values h2 { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:clamp(34px,4vw,48px); margin-bottom:40px; }
+  .v-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:34px; }
+  .v-item h4 { font-family:'Barlow Condensed',sans-serif; font-weight:800; text-transform:uppercase; font-size:19px; color:var(--amber); margin-bottom:10px; }
+  .v-item p { font-size:13.5px; line-height:1.7; color:rgba(255,255,255,.6); }
+
+  .cta-end { text-align:center; padding:90px 32px 100px; }
+  @media (max-width:960px){ .about-hero{padding:60px 20px 46px;} .story{padding:56px 20px;} .v-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/" class="nav-logo">Drafted<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="/shop.html">Shop</a></li>
+    <li><a href="/how-it-works.html">How It Works</a></li>
+    <li><a href="/about.html" class="active">About</a></li>
+    <li><a href="/contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right"><a href="/shop.html" class="nav-cta">Shop Now</a></div>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/shop.html">Shop</a><a href="/how-it-works.html">How It Works</a><a href="/about.html">About</a><a href="/contact.html">Contact</a>
+</div>
+
+<header class="about-hero" data-stagger>
+  <h1 class="display-xl">The Pros Get<br>Celebrated.<br><em>Why Not You?</em></h1>
+  <p class="lede">Walk into any store and you'll find walls of merch for professional athletes. Beautiful, illustrated, premium gear — for the 2% who made it. Drafted exists for everyone else.</p>
+</header>
+
+<div class="img-break img-zoom">
+  <div class="media zoom-inner" data-parallax="0.1" style="background-image:url('/assets/placeholders/lifestyle.jpg');"></div>
+  <div class="note">[ Brand photo — athletes, sideline, family in the stands ]</div>
+</div>
+
+<section class="story">
+  <h2 class="reveal">Born On The Sidelines</h2>
+  <p class="reveal">Drafted started behind a camera lens at Phoenix youth and high school games — watching kids leave everything on the field while their biggest fans cheered from the bleachers. The effort was pro-level. The heart was pro-level. The merch? It didn't exist.</p>
+  <p class="reveal">Senior seasons end. Championship runs become memories. Signing days come once. <b>These moments deserve more than a phone photo buried in a camera roll.</b></p>
+  <h2 class="reveal">What We Make</h2>
+  <p class="reveal">Premium illustrated apparel built around <b>your athlete</b> — their photo, their name, their number, their school — in styles inspired by the best licensed sports merch ever made. Generated in minutes, approved by you, printed on garments worth keeping.</p>
+  <p class="reveal">This isn't a novelty tee. It's the jersey moment every athlete deserves.</p>
+</section>
+
+<section class="values">
+  <div class="values-inner">
+    <h2 class="reveal">What We Stand On</h2>
+    <div class="v-grid" data-stagger>
+      <div class="v-item"><h4>Every Athlete Counts</h4><p>Youth leagues, JV, varsity, club — if they put in the work, they've earned the merch. No gatekeeping.</p></div>
+      <div class="v-item"><h4>You Approve Everything</h4><p>Nothing prints without your yes. Proofs in minutes, free regenerations, and a real artist on standby.</p></div>
+      <div class="v-item"><h4>Premium Or Nothing</h4><p>Quality garments, clean typography, illustration styles built to be worn proud and kept forever.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-end reveal">
+  <h2 class="display-xl" style="font-size:clamp(44px,6vw,84px);margin-bottom:24px;">Get<br>Drafted.</h2>
+  <a href="/shop.html" class="btn-primary" style="padding:17px 44px;font-size:14px;">Shop The Collection →</a>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-bottom" style="border:none;">
+    <p class="footer-copy">© 2025 Drafted Apparel</p>
+    <div class="footer-legal"><a href="/shop.html">Shop</a><a href="/contact.html">Contact</a></div>
+  </div>
+</footer>
+
+<script src="/js/main.js"></script>
+</body>
+</html>
