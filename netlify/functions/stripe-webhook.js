@@ -39,18 +39,59 @@ exports.handler = async (event) => {
   try {
     if (stripeEvent.type === 'checkout.session.completed') {
       const session = stripeEvent.data.object;
+      const groupId = session.metadata?.group_id;
       const orderId = session.metadata?.order_id;
-      if (!orderId) return { statusCode: 200, body: 'No order_id in metadata; ignoring.' };
+      const site = process.env.SITE_URL || `https://${event.headers.host}`;
 
-      // Fetch order
+      // ---------- MULTI-DESIGN: group payment ----------
+      if (groupId) {
+        const { data: group, error: gErr } = await supa()
+          .from('order_groups').select('*').eq('id', groupId).single();
+        if (gErr || !group) return { statusCode: 200, body: 'Group not found; ignoring.' };
+        if (group.paid) return { statusCode: 200, body: 'Already processed.' };
+
+        const paidAt = new Date().toISOString();
+        await supa().from('order_groups').update({
+          paid: true, paid_at: paidAt,
+          stripe_payment_intent: session.payment_intent || null,
+          status: 'paid',
+        }).eq('id', groupId);
+
+        // Mark every order in the group paid, then generate each in seq order.
+        const { data: orders } = await supa().from('orders')
+          .select('*').eq('group_id', groupId).order('group_seq', { ascending: true });
+
+        for (const o of (orders || [])) {
+          await supa().from('orders').update({
+            paid: true, paid_at: paidAt,
+            stripe_payment_intent: session.payment_intent || null,
+            status: 'paid',
+          }).eq('id', o.id);
+        }
+        // Generate sequentially so we stay within resource limits.
+        for (const o of (orders || [])) {
+          try { await runGeneration(o.id, { trigger: 'initial' }); }
+          catch (genErr) { console.error('Generation error for order', o.id, genErr.message); }
+        }
+
+        // One email with the group proof link.
+        try {
+          await sendEmail({ to: group.customer_email, subject: 'Your Drafted proofs are ready 🔥',
+            html: `<p>Your custom illustration${(orders||[]).length>1?'s are':' is'} ready to review:</p>
+              <p><a href="${site}/proof.html?token=${group.access_token}">View your proof${(orders||[]).length>1?'s':''}</a></p>` });
+        } catch (e) { console.error('Email error (group)', e.message); }
+
+        return { statusCode: 200, body: 'ok' };
+      }
+
+      // ---------- LEGACY: single-order payment (kept for safety) ----------
+      if (!orderId) return { statusCode: 200, body: 'No order_id/group_id in metadata; ignoring.' };
+
       const { data: order, error } = await supa()
         .from('orders').select('*').eq('id', orderId).single();
       if (error || !order) return { statusCode: 200, body: 'Order not found; ignoring.' };
-
-      // Idempotency: if already paid, do nothing (event re-delivery).
       if (order.paid) return { statusCode: 200, body: 'Already processed.' };
 
-      // Mark paid + capture payment intent.
       await supa().from('orders').update({
         paid: true,
         paid_at: new Date().toISOString(),
@@ -58,18 +99,13 @@ exports.handler = async (event) => {
         status: 'paid',
       }).eq('id', orderId);
 
-      // Fire the initial generation. (Awaited so failures surface in logs.)
-      // Generation writes its own proof + status; safe if it runs long.
       try {
         await runGeneration(orderId, { trigger: 'initial' });
-        const site = process.env.SITE_URL || `https://${event.headers.host}`;
         await sendEmail({ to: order.customer_email, subject: 'Your Drafted proof is ready 🔥',
           html: `<p>Your custom illustration is ready to review:</p>
             <p><a href="${site}/proof.html?token=${order.access_token}">View your proof</a></p>
             <p>Approve it, or regenerate up to ${order.regen_limit} times free.</p>` });
       } catch (genErr) {
-        // Generation failure must NOT fail the webhook (Stripe would retry).
-        // The order stays 'paid'; a retry/repair path can re-run generation.
         console.error('Generation error for order', orderId, genErr.message);
       }
 

@@ -182,13 +182,9 @@ function page(style, all) {
 
     <div class="customize">
       <div class="cz-title">Make It Theirs</div>
-      <div class="cz-sub">This is what we illustrate. Takes about a minute.</div>
+      <div class="cz-sub">Just two things to start the illustration — you'll add names &amp; numbers later, after you approve the art.</div>
       <div class="cz-grid">
-        <div><label class="field-label" for="fName">Athlete name *</label><input class="field-input" id="fName" maxlength="18" placeholder="Jordan Wells"></div>
-        <div><label class="field-label" for="fNumber">Jersey number</label><input class="field-input" id="fNumber" maxlength="2" inputmode="numeric" placeholder="23"></div>
-        <div><label class="field-label" for="fSport">Sport *</label><input class="field-input" id="fSport" maxlength="24" placeholder="Basketball"></div>
-        <div><label class="field-label" for="fSchool">School / team</label><input class="field-input" id="fSchool" maxlength="28" placeholder="Phoenix Central High"></div>
-        <div class="full"><label class="field-label" for="fEmail">Your email * <span style="font-weight:400;text-transform:none;letter-spacing:0;">(proof link goes here)</span></label><input class="field-input" id="fEmail" type="email" placeholder="you@email.com"></div>
+        <div class="full"><label class="field-label" for="fSport">Sport *</label><input class="field-input" id="fSport" maxlength="24" placeholder="Basketball"></div>
         <div class="full">
           <label class="field-label">Their sports photo *</label>
           <div class="dropzone" id="dropzone">
@@ -202,7 +198,22 @@ function page(style, all) {
     </div>
 
     <div class="cta-zone">
-      <button class="btn-primary cta-pay" id="btnPay"><span class="shine"></span>Pay & Generate My Illustration → $<span id="totalPrice">55.00</span></button>
+      <button class="btn-primary cta-pay" id="btnAddDesign"><span class="shine"></span>Add to My Order → $<span id="totalPrice">55.00</span></button>
+
+      <!-- YOUR DESIGNS cart -->
+      <div id="cartWrap" style="margin-top:18px;display:none;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-400);margin-bottom:10px;">Your Designs (<span id="cartCount">0</span>)</div>
+        <div id="cartList"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+          <a class="btn-ghost-d" href="/shop.html" style="flex:1;text-align:center;text-decoration:none;">+ Add Another Design</a>
+          <button class="btn-primary" id="btnContinue" style="flex:1;">Continue to Payment →</button>
+        </div>
+        <div class="full" style="margin-top:14px;">
+          <label class="field-label" for="fEmail">Your email * <span style="font-weight:400;text-transform:none;letter-spacing:0;">(proof link goes here)</span></label>
+          <input class="field-input" id="fEmail" type="email" placeholder="you@email.com">
+        </div>
+      </div>
+
       <div class="cta-micro">
         <span class="pulse-dot" style="width:7px;height:7px;"></span>
         Proof delivered within minutes — you approve before anything prints
@@ -228,7 +239,7 @@ function page(style, all) {
   </div>
 </section>
 
-<div class="sticky-cta"><button class="btn-primary" id="btnPayMobile">Pay & Generate → $<span id="totalPriceM">55.00</span></button></div>
+<div class="sticky-cta"><button class="btn-primary" id="btnPayMobile">Add to My Order → $<span id="totalPriceM">55.00</span></button></div>
 
 <footer class="site-footer">
   <div class="footer-bottom" style="border:none;">
@@ -301,35 +312,84 @@ function page(style, all) {
     finally { uploading=false; }
   }
 
-  // checkout
-  async function pay(btn){
+  // ---------- CART (multi-design) ----------
+  const CART_KEY = 'drafted_cart_v1';
+  function loadCart(){ try { return JSON.parse(sessionStorage.getItem(CART_KEY)||'[]'); } catch { return []; } }
+  function saveCart(c){ sessionStorage.setItem(CART_KEY, JSON.stringify(c)); }
+  const styleNames = { 'streetwear-sticker':'Streetwear Sticker', 'big-head':'Big Head', 'minimal':'Minimal' };
+
+  function renderCart(){
+    const cart = loadCart();
+    const wrap=$('cartWrap'), list=$('cartList');
+    if(!cart.length){ wrap.style.display='none'; return; }
+    wrap.style.display='block';
+    $('cartCount').textContent = cart.length;
+    list.innerHTML = cart.map((d,i)=>
+      '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-200);">'+
+        '<div style="width:42px;height:42px;border-radius:6px;background:var(--gray-100);background-size:cover;background-position:center;'+(d.thumb?('background-image:url('+d.thumb+');'):'')+'"></div>'+
+        '<div style="flex:1;min-width:0;">'+
+          '<div style="font-weight:600;font-size:14px;">'+(styleNames[d.styleKey]||d.styleKey)+'</div>'+
+          '<div style="font-size:12px;color:var(--gray-400);">'+d.sport+' · '+d.garmentColor+' · '+d.garmentSize+' · Qty '+d.quantity+'</div>'+
+        '</div>'+
+        '<button data-rm="'+i+'" style="background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:18px;line-height:1;">×</button>'+
+      '</div>'
+    ).join('');
+    list.querySelectorAll('[data-rm]').forEach(b=> b.onclick=()=>{ const c=loadCart(); c.splice(Number(b.dataset.rm),1); saveCart(c); renderCart(); });
+  }
+
+  // Add this configured design to the order
+  async function addDesign(btn){
     $('payErr').textContent='';
-    const name=$('fName').value.trim(), sport=$('fSport').value.trim(), email=$('fEmail').value.trim();
-    if(!name) return err('Add the athlete\\'s name.');
-    if(!sport) return err('What sport do they play?');
-    if(!/^[^@]+@[^@]+\\.[^@]+$/.test(email)) return err('Enter a valid email — your proof link goes there.');
-    if(uploading) return err('Hold on — photo is still uploading.');
-    if(!photoPath) return err('Upload their sports photo first.');
-    function err(m){ $('payErr').textContent=m; return null; }
+    const sport=$('fSport').value.trim();
+    if(!sport) return errMsg('What sport do they play?');
+    if(uploading) return errMsg('Hold on — photo is still uploading.');
+    if(!photoPath) return errMsg('Upload their sports photo first.');
+    function errMsg(m){ $('payErr').textContent=m; return null; }
+
+    const cart = loadCart();
+    cart.push({
+      styleKey: STYLE_KEY, garmentType:'tshirt',
+      garmentColor: document.querySelector('#colorRow .dot.active').dataset.color,
+      garmentSize: document.querySelector('#sizeRow .chip.active').dataset.size,
+      sport, sourcePhotoPath: photoPath, quantity: qty,
+      thumb: $('filePreview').src && $('filePreview').src.startsWith('data:') ? '' : '',
+    });
+    saveCart(cart);
+    // reset the form for the next design
+    photoPath=null; $('fSport').value=''; $('filePreview').style.display='none';
+    $('dzText').innerHTML='<b style="font-weight:600;">Upload their photo</b><br><span style="font-size:12px;color:var(--gray-400);">Action shots work great · JPG, PNG, WEBP, HEIC</span>';
+    $('uploadBar').style.display='none';
+    renderCart();
+    $('cartWrap').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  // Continue to payment -> create the group checkout
+  async function continueToPayment(btn){
+    $('payErr').textContent='';
+    const cart = loadCart();
+    const email=$('fEmail').value.trim();
+    if(!cart.length) return errMsg('Add at least one design first.');
+    if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)) return errMsg('Enter a valid email — your proof link goes there.');
+    function errMsg(m){ $('payErr').textContent=m; return null; }
 
     btn.disabled=true; const orig=btn.innerHTML; btn.innerHTML='Opening secure checkout…';
     try {
-      const r = await fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          styleKey: STYLE_KEY, garmentType:'tshirt',
-          garmentColor: document.querySelector('#colorRow .dot.active').dataset.color,
-          garmentSize: document.querySelector('#sizeRow .chip.active').dataset.size,
-          athleteName:name, jerseyNumber:$('fNumber').value.trim(),
-          sport, schoolTeam:$('fSchool').value.trim(),
-          sourcePhotoPath: photoPath, quantity: qty, customerEmail: email,
-        })});
+      const r = await fetch('/api/create-group-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ customerEmail: email, designs: cart.map(d=>({
+          styleKey:d.styleKey, garmentType:d.garmentType, garmentColor:d.garmentColor,
+          garmentSize:d.garmentSize, sport:d.sport, sourcePhotoPath:d.sourcePhotoPath, quantity:d.quantity,
+        })) })});
       const j = await r.json(); if(!r.ok) throw new Error(j.error||'Checkout failed');
+      sessionStorage.removeItem(CART_KEY);   // clear cart on successful handoff
       location.href = j.url;
     } catch(e){ $('payErr').textContent=e.message; btn.disabled=false; btn.innerHTML=orig; }
   }
-  $('btnPay').onclick = function(){ pay(this); };
-  $('btnPayMobile').onclick = function(){ pay(this); };
 
+  $('btnAddDesign').onclick = function(){ addDesign(this); };
+  $('btnContinue').onclick = function(){ continueToPayment(this); };
+  $('btnPayMobile').onclick = function(){ addDesign(this); };
+
+  renderCart();
   refresh();
 })();
 </script>

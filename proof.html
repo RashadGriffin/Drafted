@@ -295,7 +295,10 @@
 <script>
 (function(){
   const qs = new URLSearchParams(location.search);
-  const token = qs.get('token');
+  let token = qs.get('token');            // ACTIVE design token (walkthrough swaps this)
+  const entryToken = token;               // the token from the link (group or single)
+  let group = null;                       // { isGroup, designs:[{token,seq,status,done}], total }
+  let activeIdx = 0;                       // which design we're on
   const views = ['vLoading','vGenerating','vProof','vFork','vEditor','vApproved','vManual','vError'];
   const $ = id => document.getElementById(id);
   function show(id){ views.forEach(v => $(v).classList.toggle('hidden', v!==id)); }
@@ -334,7 +337,15 @@
 
   function render(s){
     state = s;
-    if(s.status==='finalized' || s.status==='in_production' || s.status==='shipped'){ show('vApproved'); stopTimers(); return; }
+    if(s.status==='finalized' || s.status==='in_production' || s.status==='shipped'){
+      stopTimers();
+      // mark this design done; advance to the next unfinished one (or all-done)
+      if(group && group.designs[activeIdx]) group.designs[activeIdx].done = true;
+      const next = group ? group.designs.findIndex(d => !d.done) : -1;
+      if(next >= 0 && next !== activeIdx){ enterDesign(next); }
+      else { allDone(); }
+      return;
+    }
     if(s.status==='approved'){ openFork(); stopTimers(); return; }
     if(s.status==='manual_requested' || s.status==='manual_in_progress'){ show('vManual'); stopTimers(); return; }
 
@@ -453,7 +464,7 @@
   // Fork: NO -> finalize clean, straight to confirmation
   $('btnForkNo').addEventListener('click', async function(){
     this.disabled=true; this.textContent='Finishing…'; $('errFork').textContent='';
-    try { await finalize({ wantsText:false }); show('vApproved'); }
+    try { await finalize({ wantsText:false }); afterFinalize(); }
     catch(e){ $('errFork').textContent=e.message; this.disabled=false; this.textContent='Keep It Clean — No Text'; }
   });
 
@@ -580,7 +591,7 @@
         name: $('inName').value, school: $('inSchool').value, number: $('inNumber').value,
         nameColor: edChosen.name, schoolColor: edChosen.school, numberColor: edChosen.number,
       });
-      show('vApproved');
+      afterFinalize();
     } catch(e){ $('errEditor').textContent=e.message; this.disabled=false; this.textContent='Looks Good — Finish'; }
   });
 
@@ -588,7 +599,7 @@
   $('btnEditorClean').addEventListener('click', async function(){
     if(!confirm('Finish with a clean, text-free shirt?')) return;
     this.disabled=true; $('errEditor').textContent='';
-    try { await finalize({ wantsText:false }); show('vApproved'); }
+    try { await finalize({ wantsText:false }); afterFinalize(); }
     catch(e){ $('errEditor').textContent=e.message; this.disabled=false; }
   });
 
@@ -651,8 +662,95 @@
     catch(e){ $('errProof').textContent=e.message; this.disabled=false; this.textContent='Send to Our Team — Up to 48h'; }
   });
 
+  /* ===================== GROUP WALKTHROUGH ===================== */
+  // Resolve the link into a list of designs, point `token` at the first
+  // unfinished one, and drive the existing per-design flow. Single orders
+  // come back as a one-item group, so the same code path handles both.
+  async function boot(){
+    try {
+      const r = await fetch('/api/get-group?token='+encodeURIComponent(entryToken));
+      const g = await r.json();
+      if(!r.ok) throw new Error(g.error || 'Could not load your order');
+      group = g;
+      // pick the first design that isn't finished; else the last one
+      activeIdx = group.designs.findIndex(d => !d.done);
+      if(activeIdx < 0) activeIdx = group.designs.length - 1;
+      enterDesign(activeIdx);
+    } catch(e){ $('errorMsg').textContent = e.message; show('vError'); }
+  }
+
+  function enterDesign(idx){
+    activeIdx = idx;
+    const d = group.designs[idx];
+    token = d.token;                 // <-- the rest of the app uses this
+    selectedId = null;
+    edConfig = null;                 // editor config is per-design
+    edChosen.name = edChosen.school = edChosen.number = null;
+    updateDesignProgress();
+    fetchState().then(render).catch(e=>{ $('errorMsg').textContent=e.message; show('vError'); });
+  }
+
+  // Show "Design X of N" when there's more than one.
+  function updateDesignProgress(){
+    let bar = $('designProgress');
+    if(!group || group.total <= 1){ if(bar) bar.style.display='none'; return; }
+    if(!bar){
+      bar = document.createElement('div');
+      bar.id = 'designProgress';
+      bar.style.cssText = 'text-align:center;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gray-400);padding:14px 0 0;';
+      document.querySelector('main').prepend(bar);
+    }
+    bar.style.display='';
+    const dots = group.designs.map((d,i)=>{
+      const on = i===activeIdx, done = d.done;
+      const c = done ? 'var(--amber,#FF9500)' : (on ? 'var(--black)' : 'var(--gray-300)');
+      return '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;margin:0 3px;background:'+c+';"></span>';
+    }).join('');
+    bar.innerHTML = 'Design '+(activeIdx+1)+' of '+group.total+' &nbsp; '+dots;
+  }
+
+  // After a design is finalized, advance to the next unfinished design,
+  // or show the all-done view.
+  function afterFinalize(){
+    if(group && group.designs[activeIdx]) group.designs[activeIdx].done = true;
+    const next = group ? group.designs.findIndex(d => !d.done) : -1;
+    if(next >= 0){ showNextDesignTransition(next); }
+    else { allDone(); }
+  }
+
+  function showNextDesignTransition(nextIdx){
+    // brief confirter, then load the next design
+    updateDesignProgress();
+    const remaining = group.total - group.designs.filter(d=>d.done).length;
+    show('vApproved');
+    const wrap = $('vApproved').querySelector('.success-wrap');
+    if(wrap){
+      wrap.innerHTML =
+        '<h1 class="proof-title">Design '+activeIdx+' Done.</h1>'+
+        '<p style="font-size:15px;color:var(--gray-600);margin:14px auto 22px;max-width:440px;">'+
+          'Nice — that one\u2019s locked in. You have '+remaining+' more design'+(remaining>1?'s':'')+' to finish.</p>'+
+        '<button class="btn-primary btn-lg" id="btnNextDesign">Next Design \u2192</button>';
+      $('btnNextDesign').addEventListener('click', ()=> enterDesign(nextIdx));
+    }
+  }
+
+  function allDone(){
+    show('vApproved');
+    const wrap = $('vApproved').querySelector('.success-wrap');
+    if(wrap){
+      const many = group && group.total > 1;
+      wrap.innerHTML =
+        '<svg class="check-draw" width="84" height="84" viewBox="0 0 52 52" fill="none">'+
+        '<circle cx="26" cy="26" r="24" stroke="#111111" stroke-width="2"/>'+
+        '<path d="M14 27l8 8 16-16" stroke="#FF9500" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+        '<h1 class="proof-title">You\u2019re<br>Drafted.</h1>'+
+        '<p style="font-size:15px;color:var(--gray-600);margin-top:14px;">'+
+          (many ? 'All your designs are locked in and headed to production.' : 'Your design is locked in and headed to production.')+'</p>';
+    }
+  }
+
   // boot
-  fetchState().then(render).catch(e=>{ $('errorMsg').textContent=e.message; show('vError'); });
+  boot();
 })();
 </script>
 </body>
