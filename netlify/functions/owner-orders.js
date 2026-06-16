@@ -15,7 +15,7 @@ exports.handler = async (event) => {
 
   const { data: orders, error } = await supa()
     .from('orders')
-    .select('id, created_at, athlete_name, customer_email, style_key, status, paid, total_cents, quantity, regen_count, regen_limit, refunded_at, access_token')
+    .select('id, created_at, athlete_name, customer_email, style_key, status, paid, total_cents, quantity, regen_count, regen_limit, refunded_at, access_token, wants_text, final_name, final_school, final_number, final_print_path, finalized_at')
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) return json(500, { error: error.message });
@@ -35,6 +35,10 @@ exports.handler = async (event) => {
     regen_limit: o.regen_limit,
     refunded: !!o.refunded_at,
     proof_token: o.access_token,
+    wants_text: o.wants_text,
+    final_text: [o.final_name, o.final_number, o.final_school].filter(Boolean).join(' · ') || null,
+    finalized: !!o.finalized_at,
+    has_print_file: !!o.final_print_path,
   }));
 
   return json(200, { orders: rows });

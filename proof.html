@@ -76,6 +76,23 @@
   .err { text-align:center; color:#B00020; font-size:14px; margin-top:18px; min-height:20px; }
   .footer-mini { text-align:center; padding:28px; font-size:12px; color:var(--gray-400); border-top:1px solid var(--gray-200); }
   .hidden { display:none !important; }
+  /* fork */
+  .fork-actions { display:flex; flex-direction:column; gap:12px; max-width:380px; margin:32px auto 0; }
+  /* live editor */
+  .editor-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; max-width:900px; margin:28px auto 0; align-items:start; }
+  @media (max-width:760px){ .editor-grid { grid-template-columns:1fr; gap:24px; } }
+  .editor-preview { position:sticky; top:20px; }
+  .ed-canvas { position:relative; width:100%; aspect-ratio:1/1; background:#f5f5f5; border:1px solid var(--gray-200); overflow:hidden; }
+  .ed-canvas img { width:100%; height:100%; object-fit:contain; display:block; }
+  .ed-layer { position:absolute; transform:translate(-50%,-50%); white-space:nowrap; font-weight:800; line-height:1; pointer-events:none; text-align:center; }
+  .ed-field { margin-bottom:18px; }
+  .ed-field label { display:block; font-size:12px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--gray-400); margin-bottom:6px; }
+  .ed-field input { width:100%; font-family:'Inter',sans-serif; font-size:15px; padding:11px 13px; border:1px solid var(--gray-300); border-radius:6px; }
+  .ed-field input:focus { outline:none; border-color:var(--black); }
+  .ed-swatches { display:flex; flex-wrap:wrap; gap:7px; margin-top:9px; }
+  .ed-sw { width:24px; height:24px; border-radius:50%; cursor:pointer; border:2px solid #fff; box-shadow:0 0 0 1px var(--gray-300); transition:transform .12s, box-shadow .12s; }
+  .ed-sw:hover { transform:scale(1.12); }
+  .ed-sw.on { box-shadow:0 0 0 2px var(--black); transform:scale(1.12); }
 </style>
 </head>
 <body>
@@ -168,7 +185,71 @@
     <div class="err" id="errProof"></div>
   </section>
 
-  <!-- APPROVED -->
+  <!-- FORK: add text? -->
+  <section id="vFork" class="hidden">
+    <div class="stage-head" style="text-align:center;">
+      <svg class="check-draw" width="64" height="64" viewBox="0 0 52 52" fill="none" style="margin-bottom:8px;">
+        <circle cx="26" cy="26" r="24" stroke="#111111" stroke-width="2"/>
+        <path d="M14 27l8 8 16-16" stroke="#FF9500" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1 class="proof-title">Art Approved.</h1>
+      <p style="font-size:16px;color:var(--gray-600);margin:14px auto 0;max-width:460px;">
+        Want to add a name, school, or number to your shirt? Totally optional — your illustration looks great on its own.</p>
+    </div>
+    <div class="fork-actions">
+      <button class="btn-primary btn-lg" id="btnForkYes">Add Text</button>
+      <button class="btn-ghost-d" id="btnForkNo">Keep It Clean — No Text</button>
+    </div>
+    <div class="err" id="errFork"></div>
+  </section>
+
+  <!-- LIVE TEXT EDITOR -->
+  <section id="vEditor" class="hidden">
+    <div class="stage-head" style="text-align:center;">
+      <h1 class="proof-title">Personalize It</h1>
+      <p style="font-size:14px;color:var(--gray-600);margin:10px auto 0;max-width:460px;">
+        Add what you want — leave anything blank to skip it. Changes preview live.</p>
+    </div>
+
+    <div class="editor-grid">
+      <!-- live preview -->
+      <div class="editor-preview">
+        <div class="ed-canvas" id="edCanvas">
+          <img id="edArt" alt="Your approved illustration">
+          <div class="ed-layer" id="edName"></div>
+          <div class="ed-layer" id="edSchool"></div>
+          <div class="ed-layer" id="edNumber"></div>
+        </div>
+      </div>
+
+      <!-- controls -->
+      <div class="editor-controls">
+        <div class="ed-field">
+          <label>Name</label>
+          <input type="text" id="inName" maxlength="18" placeholder="e.g. CJ Griffin">
+          <div class="ed-swatches" data-for="name"></div>
+        </div>
+        <div class="ed-field">
+          <label>School / Team</label>
+          <input type="text" id="inSchool" maxlength="28" placeholder="e.g. East High">
+          <div class="ed-swatches" data-for="school"></div>
+        </div>
+        <div class="ed-field">
+          <label>Number</label>
+          <input type="text" id="inNumber" maxlength="4" placeholder="e.g. 15">
+          <div class="ed-swatches" data-for="number"></div>
+        </div>
+
+        <div class="actions" style="margin-top:20px;justify-content:flex-start;flex-wrap:wrap;gap:10px;">
+          <button class="btn-primary btn-lg" id="btnEditorDone">Looks Good — Finish</button>
+          <button class="btn-ghost-d" id="btnEditorClean">Actually, Keep It Clean</button>
+        </div>
+        <div class="err" id="errEditor"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPROVED / FINALIZED -->
   <section id="vApproved" class="hidden">
     <div class="success-wrap">
       <svg class="check-draw" width="84" height="84" viewBox="0 0 52 52" fill="none">
@@ -176,7 +257,7 @@
         <path d="M14 27l8 8 16-16" stroke="#FF9500" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <h1 class="proof-title">You're<br>Drafted.</h1>
-      <p style="font-size:15px;color:var(--gray-600);margin-top:14px;">Your design is approved and headed to production.</p>
+      <p style="font-size:15px;color:var(--gray-600);margin-top:14px;">Your design is locked in and headed to production.</p>
       <div class="next-steps">
         <div class="next-step"><span class="ns-num">01</span><span><b>Printing.</b> Your design goes onto premium garments.</span></div>
         <div class="next-step"><span class="ns-num">02</span><span><b>Shipping.</b> Tracking lands in your inbox the moment it leaves.</span></div>
@@ -215,7 +296,7 @@
 (function(){
   const qs = new URLSearchParams(location.search);
   const token = qs.get('token');
-  const views = ['vLoading','vGenerating','vProof','vApproved','vManual','vError'];
+  const views = ['vLoading','vGenerating','vProof','vFork','vEditor','vApproved','vManual','vError'];
   const $ = id => document.getElementById(id);
   function show(id){ views.forEach(v => $(v).classList.toggle('hidden', v!==id)); }
 
@@ -253,7 +334,8 @@
 
   function render(s){
     state = s;
-    if(s.status==='approved'){ show('vApproved'); stopTimers(); return; }
+    if(s.status==='finalized' || s.status==='in_production' || s.status==='shipped'){ show('vApproved'); stopTimers(); return; }
+    if(s.status==='approved'){ openFork(); stopTimers(); return; }
     if(s.status==='manual_requested' || s.status==='manual_in_progress'){ show('vManual'); stopTimers(); return; }
 
     if(s.generating || !s.proof){
@@ -344,8 +426,170 @@
 
   $('btnApprove').addEventListener('click', async function(){
     this.disabled=true; this.textContent='Approving…'; $('errProof').textContent='';
-    try { await action('approve', selectedId ? { proofId: selectedId } : null); render(Object.assign({},state,{status:'approved'})); }
+    try {
+      await action('approve', selectedId ? { proofId: selectedId } : null);
+      state = Object.assign({}, state, { status:'approved' });
+      openFork();
+    }
     catch(e){ $('errProof').textContent=e.message; this.disabled=false; this.textContent='Approve — Send to Print ✓'; }
+  });
+
+  /* ===================== FORK + LIVE TEXT EDITOR ===================== */
+  let edConfig = null;                       // {specs, colors, defaultColor, prefill}
+  const edChosen = { name:null, school:null, number:null };  // chosen colors (hex)
+
+  function openFork(){ show('vFork'); }
+
+  async function finalize(payload){
+    const r = await fetch('/api/finalize-design', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(Object.assign({ token }, payload))
+    });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(j.error || 'Could not finish your design');
+    return j;
+  }
+
+  // Fork: NO -> finalize clean, straight to confirmation
+  $('btnForkNo').addEventListener('click', async function(){
+    this.disabled=true; this.textContent='Finishing…'; $('errFork').textContent='';
+    try { await finalize({ wantsText:false }); show('vApproved'); }
+    catch(e){ $('errFork').textContent=e.message; this.disabled=false; this.textContent='Keep It Clean — No Text'; }
+  });
+
+  // Fork: YES -> load editor config, open editor
+  $('btnForkYes').addEventListener('click', async function(){
+    this.disabled=true; this.textContent='Loading…'; $('errFork').textContent='';
+    try { await openEditor(); }
+    catch(e){ $('errFork').textContent=e.message; this.disabled=false; this.textContent='Add Text'; }
+  });
+
+  async function openEditor(){
+    if(!edConfig){
+      const r = await fetch('/api/editor-config?token='+encodeURIComponent(token));
+      const j = await r.json().catch(()=>({}));
+      if(!r.ok) throw new Error(j.error || 'Could not open the editor');
+      edConfig = j;
+    }
+    // Refetch state so we have a fresh signed URL for the approved art.
+    try { const fresh = await fetchState(); if(fresh) state = Object.assign({}, fresh, { status: state.status }); } catch(e){}
+
+    // art = the approved/selected proof image (fresh signed URL)
+    let artUrl = '';
+    if(state){
+      const sel = (state.history||[]).find(h=>h.id===selectedId);
+      artUrl = (sel && sel.url) || (state.proof && state.proof.url) ||
+               ((state.history||[])[0] && state.history[0].url) || '';
+    }
+    $('edArt').src = artUrl;
+
+    // prefill text fields from what they entered at order time
+    $('inName').value   = edConfig.prefill.name   || '';
+    $('inSchool').value = edConfig.prefill.school || '';
+    $('inNumber').value = edConfig.prefill.number || '';
+
+    buildSwatches();
+    layoutLayers();
+    updatePreview();
+    show('vEditor');
+    // size once the canvas has its real dimensions
+    requestAnimationFrame(sizeLayers);
+    setTimeout(sizeLayers, 60);
+  }
+
+  // Build curated color swatches under each field
+  function buildSwatches(){
+    document.querySelectorAll('.ed-swatches').forEach(box => {
+      const field = box.getAttribute('data-for');
+      box.innerHTML = '';
+      edConfig.colors.forEach((c, i) => {
+        const sw = document.createElement('div');
+        sw.className = 'ed-sw';
+        sw.style.background = c.hex;
+        sw.title = c.name;
+        // default first color selected
+        if(i===0 && !edChosen[field]){ edChosen[field] = c.hex; }
+        if(edChosen[field] === c.hex) sw.classList.add('on');
+        sw.addEventListener('click', ()=>{
+          edChosen[field] = c.hex;
+          [...box.children].forEach(x=>x.classList.remove('on'));
+          sw.classList.add('on');
+          updatePreview();
+        });
+        box.appendChild(sw);
+      });
+    });
+  }
+
+  // Position the three preview layers per the style's placement specs
+  function layoutLayers(){
+    const map = { name:'edName', school:'edSchool', number:'edNumber' };
+    for(const k of Object.keys(map)){
+      const el = $(map[k]); const spec = edConfig.specs[k];
+      if(!spec){ el.style.display='none'; continue; }
+      el.style.display='';
+      el.style.left = (spec.xPct*100)+'%';
+      el.style.top  = (spec.yPct*100)+'%';
+      el.style.fontFamily = fontFor(spec.font);
+      el.style.textTransform = spec.uppercase ? 'uppercase' : 'none';
+      // size is % of canvas height; canvas is square -> use cqh via JS on resize
+      el.dataset.sizePct = spec.sizePct;
+      el.style.textAlign = 'center';
+    }
+    sizeLayers();
+  }
+  function fontFor(f){
+    if(f==='BarlowCondensed-Bold') return "'Barlow Condensed','Arial Narrow',sans-serif";
+    if(f==='PressStart2P') return "'Press Start 2P',monospace";
+    return "Inter,sans-serif";
+  }
+  // Convert sizePct (fraction of image height) to px against the live canvas
+  function sizeLayers(){
+    const canvas = $('edCanvas'); if(!canvas) return;
+    const h = canvas.clientHeight || canvas.offsetHeight || 360;
+    ['edName','edSchool','edNumber'].forEach(id=>{
+      const el = $(id); if(!el || el.style.display==='none') return;
+      const pct = parseFloat(el.dataset.sizePct||'0.05');
+      el.style.fontSize = (pct*h)+'px';
+    });
+  }
+  window.addEventListener('resize', sizeLayers);
+
+  // Live preview: mirror inputs + colors onto the overlay layers
+  function updatePreview(){
+    const fields = { name:'inName', school:'inSchool', number:'inNumber' };
+    const layerEls = { name:'edName', school:'edSchool', number:'edNumber' };
+    for(const k of Object.keys(fields)){
+      const el = $(layerEls[k]); if(!el) continue;
+      const spec = edConfig.specs[k];
+      let v = $(fields[k]).value || '';
+      if(spec && spec.maxChars) v = v.slice(0, spec.maxChars);
+      el.textContent = v;
+      el.style.color = edChosen[k] || (spec && spec.defaultColor) || '#111';
+    }
+    sizeLayers();
+  }
+  ['inName','inSchool','inNumber'].forEach(id => $(id).addEventListener('input', updatePreview));
+
+  // Editor: finish with text
+  $('btnEditorDone').addEventListener('click', async function(){
+    this.disabled=true; this.textContent='Finishing…'; $('errEditor').textContent='';
+    try {
+      await finalize({
+        wantsText:true,
+        name: $('inName').value, school: $('inSchool').value, number: $('inNumber').value,
+        nameColor: edChosen.name, schoolColor: edChosen.school, numberColor: edChosen.number,
+      });
+      show('vApproved');
+    } catch(e){ $('errEditor').textContent=e.message; this.disabled=false; this.textContent='Looks Good — Finish'; }
+  });
+
+  // Editor: changed mind -> clean shirt
+  $('btnEditorClean').addEventListener('click', async function(){
+    if(!confirm('Finish with a clean, text-free shirt?')) return;
+    this.disabled=true; $('errEditor').textContent='';
+    try { await finalize({ wantsText:false }); show('vApproved'); }
+    catch(e){ $('errEditor').textContent=e.message; this.disabled=false; }
   });
 
   // Regenerate now opens the feedback panel first.

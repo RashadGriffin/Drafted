@@ -37,4 +37,12 @@ async function signedUrl(bucket, path, expiresInSec = 3600) {
   return data.signedUrl;
 }
 
-module.exports = { supa, BUCKETS, uploadBuffer, signedUrl };
+async function downloadBuffer(bucket, path) {
+  if (!path) throw new Error('downloadBuffer: no path');
+  const { data, error } = await supa().storage.from(bucket).download(path);
+  if (error) throw new Error(`Download failed (${bucket}/${path}): ${error.message}`);
+  const arrayBuf = await data.arrayBuffer();
+  return Buffer.from(arrayBuf);
+}
+
+module.exports = { supa, BUCKETS, uploadBuffer, signedUrl, downloadBuffer };

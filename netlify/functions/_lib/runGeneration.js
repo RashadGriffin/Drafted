@@ -17,7 +17,7 @@
 
 const { supa, BUCKETS, uploadBuffer } = require('./supabase.js');
 const { generateIllustration } = require('./generate.js');
-const { composeProof } = require('./compose.js');
+const { processArt } = require('./compose.js');
 const { snapUniformColors, snapEnabled } = require('./colorSnap.js');
 const { getStyle } = require('../../../config/styles.js');
 
@@ -80,15 +80,15 @@ async function runGeneration(orderId, { trigger = 'initial' } = {}) {
     // ---- Store RAW image ----
     const rawPath = `${orderId}/attempt-${attemptNo}-raw.png`;
     await uploadBuffer(BUCKETS.proofs, rawPath, genBuffer, result.mimeType);
-    console.log(`[gen ${orderId}] raw uploaded, entering compositor`);
+    console.log(`[gen ${orderId}] raw uploaded, processing art (text-free)`);
 
-    // ---- STEP 4: composite name/number/school programmatically ----
-    const style = getStyle(order.style_key);
-    const { compositedBuffer, printBuffer } = await composeProof(genBuffer, style, order);
-    console.log(`[gen ${orderId}] compositor done, uploading proof+print`);
+    // ---- Produce the PURE illustration — no text baked in. ----
+    // Text is added later, only if the customer opts in via the editor.
+    const { proofBuffer, printBuffer } = await processArt(genBuffer);
+    console.log(`[gen ${orderId}] art processed, uploading proof+print`);
     const compositedPath = `${orderId}/attempt-${attemptNo}-proof.png`;
     const printPath = `${orderId}/attempt-${attemptNo}-print.png`;
-    await uploadBuffer(BUCKETS.proofs, compositedPath, compositedBuffer, 'image/png');
+    await uploadBuffer(BUCKETS.proofs, compositedPath, proofBuffer, 'image/png');
     await uploadBuffer(BUCKETS.print, printPath, printBuffer, 'image/png');
     console.log(`[gen ${orderId}] all uploads done, marking ready`);
 

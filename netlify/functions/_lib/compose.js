@@ -1,19 +1,25 @@
 /* ===========================================================
-   STEP 4 — Text-Overlay Compositor
-   Takes the RAW AI image + the style's textOverlay spec and
-   composites athlete name / number / school programmatically.
-   AI never renders text — this layer does, deterministically.
+   COMPOSITOR
+   Two responsibilities, deliberately separated:
 
-   Output: { compositedBuffer, printBuffer }
-   - composited: 1024px, shown to the customer on the proof page
-   - print: 3000px PNG for Printful (resized from composited)
+   1) processArt()    — produce the pure illustration (NO text).
+                        Used at GENERATION time. The proof the
+                        customer approves is text-free artwork.
 
-   Uses sharp + an SVG text layer (librsvg). Fonts: bold system
-   stack for now; custom brand fonts can be bundled later (see
-   RUNBOOK "Fonts" note).
+   2) composeWithText() — composite the customer's chosen text
+                        (name / school / number + colors) onto an
+                        already-approved illustration. Used at the
+                        END of the live editor step to build the
+                        final print file.
+
+   AI never renders text. This layer does, deterministically — but
+   only AFTER the art is approved and only if the customer opts in.
    =========================================================== */
 
 const sharp = require('sharp');
+
+const PROOF_SIZE = 1024;   // shown to the customer
+const PRINT_SIZE = 3000;   // sent to Printful
 
 const FONT_STACK = {
   'BarlowCondensed-Bold': "'Barlow Condensed','Arial Narrow','DejaVu Sans Condensed',Arial,sans-serif",
@@ -23,8 +29,22 @@ const FONT_STACK = {
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function textEl(spec, value, W, H){
-  if(!spec || !spec.show || !value) return '';
+/* 1) PURE ART — no text. Used at generation time. */
+async function processArt(rawBuffer, opts = {}) {
+  const W = opts.proofSize || PROOF_SIZE;
+  const proofBuffer = await sharp(rawBuffer)
+    .resize(W, W, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
+    .png()
+    .toBuffer();
+  const printBuffer = await sharp(rawBuffer)
+    .resize(opts.printSize || PRINT_SIZE, opts.printSize || PRINT_SIZE, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 }, kernel: 'lanczos3' })
+    .png()
+    .toBuffer();
+  return { proofBuffer, printBuffer };
+}
+
+function textEl(spec, value, color, W, H){
+  if(!spec || !value) return '';
   let v = String(value);
   if (spec.maxChars) v = v.slice(0, spec.maxChars);
   if (spec.uppercase) v = v.toUpperCase();
@@ -33,44 +53,48 @@ function textEl(spec, value, W, H){
   const size = (spec.sizePct ?? .05) * H;
   const anchor = spec.align === 'left' ? 'start' : spec.align === 'right' ? 'end' : 'middle';
   const family = FONT_STACK[spec.font] || FONT_STACK['Inter-Medium'];
-  return `<text x="${x}" y="${y}" font-family="${family}" font-weight="800" font-size="${size}" fill="${esc(spec.color||'#111')}" text-anchor="${anchor}" dominant-baseline="middle">${esc(v)}</text>`;
+  const fill = color || spec.color || '#111111';
+  return `<text x="${x}" y="${y}" font-family="${family}" font-weight="800" font-size="${size}" fill="${esc(fill)}" text-anchor="${anchor}" dominant-baseline="middle">${esc(v)}</text>`;
 }
 
-async function composeProof(rawBuffer, style, order, opts = {}) {
-  const W = 1024, H = 1024;
-  const ov = style.textOverlay || {};
-  if (ov.enabled === false) {
-    const composited = await sharp(rawBuffer).resize(W, H, { fit: 'cover' }).png().toBuffer();
-    const print = await sharp(composited).resize(opts.printSize || 3000, opts.printSize || 3000).png().toBuffer();
-    return { compositedBuffer: composited, printBuffer: print };
-  }
+/* 2) COMPOSE WITH TEXT — approved art + customer's chosen text/colors. */
+async function composeWithText(art, style, fields = {}, colors = {}, opts = {}) {
+  const W = opts.proofSize || PROOF_SIZE;
+  const ov = (style && style.textOverlay) || {};
 
-  // Render order matters: "behind"-flagged layers first (lowest), then the rest.
-  const layers = [];
   const entries = [
-    ['number', order.jersey_number],
-    ['name',   order.athlete_name],
-    ['school', order.school_team],
+    ['number', fields.number, colors.number],
+    ['name',   fields.name,   colors.name],
+    ['school', fields.school, colors.school],
   ];
-  for (const [k, val] of entries) if (ov[k] && ov[k].behind) layers.push(textEl(ov[k], val, W, H));
-  for (const [k, val] of entries) if (ov[k] && !ov[k].behind) layers.push(textEl(ov[k], val, W, H));
+
+  const layers = [];
+  for (const [k, val, col] of entries) if (ov[k] && ov[k].behind) layers.push(textEl(ov[k], val, col, W, W));
+  for (const [k, val, col] of entries) if (ov[k] && !ov[k].behind) layers.push(textEl(ov[k], val, col, W, W));
+
+  const hasText = layers.some(Boolean);
+  if (!hasText) return processArt(art, opts);   // clean shirt
 
   const svg = Buffer.from(
-    `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${layers.join('')}</svg>`
+    `<svg width="${W}" height="${W}" viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg">${layers.join('')}</svg>`
   );
-
-  const compositedBuffer = await sharp(rawBuffer)
-    .resize(W, H, { fit: 'cover' })
+  const proofBuffer = await sharp(art)
+    .resize(W, W, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
     .composite([{ input: svg, top: 0, left: 0 }])
     .png()
     .toBuffer();
 
-  const printBuffer = await sharp(compositedBuffer)
-    .resize(opts.printSize || 3000, opts.printSize || 3000, { kernel: 'lanczos3' })
+  const P = opts.printSize || PRINT_SIZE;
+  const svgPrint = Buffer.from(
+    `<svg width="${P}" height="${P}" viewBox="0 0 ${W} ${W}" xmlns="http://www.w3.org/2000/svg">${layers.join('')}</svg>`
+  );
+  const printBuffer = await sharp(art)
+    .resize(P, P, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 }, kernel: 'lanczos3' })
+    .composite([{ input: svgPrint, top: 0, left: 0 }])
     .png()
     .toBuffer();
 
-  return { compositedBuffer, printBuffer };
+  return { proofBuffer, printBuffer };
 }
 
-module.exports = { composeProof };
+module.exports = { processArt, composeWithText, PROOF_SIZE, PRINT_SIZE, FONT_STACK };

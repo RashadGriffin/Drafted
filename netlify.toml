@@ -28,4 +28,4 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["sharp"]
-  included_files = ["config/styles.js", "config/settings.js", "config/teamColors.js"]
+  included_files = ["config/styles.js", "config/settings.js", "config/teamColors.js", "config/textColors.js"]
