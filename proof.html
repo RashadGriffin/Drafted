@@ -423,6 +423,9 @@
   function stopTimers(){ clearInterval(genTimer); clearInterval(pollTimer); clearInterval(barTimer); genTimer=pollTimer=barTimer=null; }
 
   async function poll(){
+    // Only poll while we're actually waiting on generation. If we've moved
+    // past it (approved/fork/editor/finalized), stop — never re-render stale.
+    if(!$('vGenerating') || $('vGenerating').classList.contains('hidden')){ stopTimers(); return; }
     try { const s = await fetchState(); if(!s.generating && s.proof) render(s); else if(['approved','manual_requested'].includes(s.status)) render(s); }
     catch(e){ /* keep polling quietly */ }
   }
@@ -437,9 +440,11 @@
 
   $('btnApprove').addEventListener('click', async function(){
     this.disabled=true; this.textContent='Approving…'; $('errProof').textContent='';
+    stopTimers();   // kill any generating/poll timers so they can't re-render mid-transition
     try {
       await action('approve', selectedId ? { proofId: selectedId } : null);
       state = Object.assign({}, state, { status:'approved' });
+      stopTimers();
       openFork();
     }
     catch(e){ $('errProof').textContent=e.message; this.disabled=false; this.textContent='Approve — Send to Print ✓'; }
@@ -680,6 +685,7 @@
   }
 
   function enterDesign(idx){
+    stopTimers();                    // clear any timers from the previous design/phase
     activeIdx = idx;
     const d = group.designs[idx];
     token = d.token;                 // <-- the rest of the app uses this
@@ -726,7 +732,7 @@
     const wrap = $('vApproved').querySelector('.success-wrap');
     if(wrap){
       wrap.innerHTML =
-        '<h1 class="proof-title">Design '+activeIdx+' Done.</h1>'+
+        '<h1 class="proof-title">Design '+(activeIdx+1)+' Done.</h1>'+
         '<p style="font-size:15px;color:var(--gray-600);margin:14px auto 22px;max-width:440px;">'+
           'Nice — that one\u2019s locked in. You have '+remaining+' more design'+(remaining>1?'s':'')+' to finish.</p>'+
         '<button class="btn-primary btn-lg" id="btnNextDesign">Next Design \u2192</button>';
