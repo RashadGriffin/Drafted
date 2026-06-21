@@ -131,10 +131,12 @@
     </div>
 
     <div class="opt">
-      <div class="opt-head"><span class="field-label" style="margin:0;">Size</span><span class="opt-val">Youth & adult</span></div>
+      <div class="opt-head"><span class="field-label" style="margin:0;">Sizes</span><span class="opt-val">Tap to add · set a count each</span></div>
       <div class="chip-row" id="sizeRow">
-        <div class="chip" data-size="YS">YS</div><div class="chip" data-size="YM">YM</div><div class="chip" data-size="YL">YL</div><div class="chip" data-size="S">S</div><div class="chip active" data-size="M">M</div><div class="chip" data-size="L">L</div><div class="chip" data-size="XL">XL</div><div class="chip" data-size="2XL">2XL</div>
+        <div class="chip" data-size="YS">YS</div><div class="chip" data-size="YM">YM</div><div class="chip" data-size="YL">YL</div><div class="chip" data-size="S">S</div><div class="chip" data-size="M">M</div><div class="chip" data-size="L">L</div><div class="chip" data-size="XL">XL</div><div class="chip" data-size="2XL">2XL</div>
       </div>
+      <div id="sizeQtyList" style="margin-top:14px;display:flex;flex-direction:column;gap:8px;"></div>
+      <div id="sizeHint" style="font-size:13px;color:var(--gray-400);margin-top:10px;">Tap a size above to add it. Need the same design in YM and L? Add both — one illustration, printed across every size you pick.</div>
     </div>
 
     <div class="opt">
@@ -145,22 +147,14 @@
       </div>
     </div>
 
-    <div class="opt">
-      <div class="opt-head"><span class="field-label" style="margin:0;">Quantity</span><span class="opt-val">Same design discounts</span></div>
-      <div class="qty">
-        <button type="button" id="qMinus">−</button>
-        <input id="qtyInput" value="1" inputmode="numeric">
-        <button type="button" id="qPlus">+</button>
-      </div>
-    </div>
-
     <div class="bulk" id="bulkTable">
       <div class="bulk-row head"><div>Quantity</div><div>Per shirt</div><div>You save</div></div>
       <div class="bulk-row" data-tier="1"><div>1 shirt</div><div>$55</div><div>—</div></div>
       <div class="bulk-row" data-tier="2"><div>2–3 shirts</div><div>$50</div><div>$5 each</div></div>
       <div class="bulk-row" data-tier="4"><div>4+ shirts</div><div>$45</div><div>$10 each</div></div>
     </div>
-    <div class="bulk-note">Same style + same design only. Discount applied automatically at checkout.</div>
+    <div class="bulk-note">Discount counts every shirt in your order — across sizes and designs. Applied automatically at checkout.</div>
+
 
     <div class="customize">
       <div class="cz-title">Make It Theirs</div>
@@ -240,14 +234,16 @@
   const STYLE_KEY = 'streetwear-sticker';
   const TIERS = [{min:1,unit:55},{min:2,unit:50},{min:4,unit:45}];
   const $ = id => document.getElementById(id);
-  let qty = 1, photoPath = null, uploading = false;
+  let sizeQty = {}, photoPath = null, uploading = false;   // {M:1, L:2}
+  function totalQty(){ return Object.values(sizeQty).reduce((a,b)=>a+b,0); }
 
   function tierFor(q){ let t=TIERS[0]; for(const x of TIERS) if(q>=x.min) t=x; return t; }
   function refresh(){
-    const t = tierFor(qty);
+    const qty = totalQty();
+    const t = tierFor(Math.max(1,qty));
     tickTo($('unitPrice'), t.unit, '', 2);
-    tickTo($('totalPrice'), t.unit*qty, '', 2);
-    tickTo($('totalPriceM'), t.unit*qty, '', 2);
+    tickTo($('totalPrice'), t.unit*Math.max(1,qty), '', 2);
+    tickTo($('totalPriceM'), t.unit*Math.max(1,qty), '', 2);
     document.querySelectorAll('#bulkTable .bulk-row[data-tier]').forEach(r=>{
       r.classList.toggle('active', Number(r.dataset.tier)===t.min);
     });
@@ -255,20 +251,41 @@
     const badge = $('tierBadge');
     if(save>0){ badge.textContent='Bulk price — saving $'+save; badge.classList.add('show'); }
     else badge.classList.remove('show');
-    $('qtyInput').value = qty;
+    renderSizeQty();
   }
-  $('qMinus').onclick = ()=>{ qty=Math.max(1,qty-1); refresh(); };
-  $('qPlus').onclick = ()=>{ qty=Math.min(50,qty+1); refresh(); };
-  $('qtyInput').addEventListener('change', e=>{ qty=Math.max(1,Math.min(50,parseInt(e.target.value)||1)); refresh(); });
 
-  // selectors
+  // Render a stepper row for each added size
+  function renderSizeQty(){
+    const list = $('sizeQtyList');
+    const sizes = Object.keys(sizeQty);
+    $('sizeHint').style.display = sizes.length ? 'none' : 'block';
+    list.innerHTML = sizes.map(sz =>
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;border:1px solid var(--gray-200);border-radius:8px;">'+
+        '<span style="font-weight:600;font-size:15px;min-width:42px;">'+sz+'</span>'+
+        '<div class="qty" style="margin:0;">'+
+          '<button type="button" data-dec="'+sz+'">−</button>'+
+          '<input value="'+sizeQty[sz]+'" data-q="'+sz+'" inputmode="numeric" style="width:46px;">'+
+          '<button type="button" data-inc="'+sz+'">+</button>'+
+        '</div>'+
+      '</div>'
+    ).join('');
+    list.querySelectorAll('[data-inc]').forEach(b=> b.onclick=()=>{ const s=b.dataset.inc; sizeQty[s]=Math.min(50,(sizeQty[s]||0)+1); syncChips(); refresh(); });
+    list.querySelectorAll('[data-dec]').forEach(b=> b.onclick=()=>{ const s=b.dataset.dec; sizeQty[s]=(sizeQty[s]||0)-1; if(sizeQty[s]<=0) delete sizeQty[s]; syncChips(); refresh(); });
+    list.querySelectorAll('[data-q]').forEach(inp=> inp.onchange=()=>{ const s=inp.dataset.q; const v=Math.max(0,Math.min(50,parseInt(inp.value)||0)); if(v<=0) delete sizeQty[s]; else sizeQty[s]=v; syncChips(); refresh(); });
+  }
+  function syncChips(){
+    document.querySelectorAll('#sizeRow .chip[data-size]').forEach(c=>{
+      c.classList.toggle('active', !!sizeQty[c.dataset.size]);
+    });
+  }
   document.querySelectorAll('#colorRow .dot').forEach(d=> d.onclick=()=>{
     document.querySelectorAll('#colorRow .dot').forEach(x=>x.classList.remove('active'));
     d.classList.add('active'); $('colorVal').textContent=d.dataset.color;
   });
-  document.querySelectorAll('#sizeRow .chip').forEach(c=> c.onclick=()=>{
-    document.querySelectorAll('#sizeRow .chip').forEach(x=>x.classList.remove('active'));
-    c.classList.add('active');
+  document.querySelectorAll('#sizeRow .chip[data-size]').forEach(c=> c.onclick=()=>{
+    const sz=c.dataset.size;
+    if(sizeQty[sz]) delete sizeQty[sz]; else sizeQty[sz]=1;
+    syncChips(); refresh();
   });
 
   // photo upload — direct to Supabase via signed URL
@@ -310,16 +327,17 @@
     if(!cart.length){ wrap.style.display='none'; return; }
     wrap.style.display='block';
     $('cartCount').textContent = cart.length;
-    list.innerHTML = cart.map((d,i)=>
-      '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-200);">'+
-        '<div style="width:42px;height:42px;border-radius:6px;background:var(--gray-100);background-size:cover;background-position:center;'+(d.thumb?('background-image:url('+d.thumb+');'):'')+'"></div>'+
+    list.innerHTML = cart.map((d,i)=>{
+      const szText = d.sizes ? Object.entries(d.sizes).map(([s,q])=>s+'×'+q).join(', ') : (d.garmentSize+' ×'+(d.quantity||1));
+      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-200);">'+
+        '<div style="width:42px;height:42px;border-radius:6px;background:var(--gray-100);"></div>'+
         '<div style="flex:1;min-width:0;">'+
           '<div style="font-weight:600;font-size:14px;">'+(styleNames[d.styleKey]||d.styleKey)+'</div>'+
-          '<div style="font-size:12px;color:var(--gray-400);">'+d.sport+' · '+d.garmentColor+' · '+d.garmentSize+' · Qty '+d.quantity+'</div>'+
+          '<div style="font-size:12px;color:var(--gray-400);">'+d.sport+' · '+d.garmentColor+' · '+szText+'</div>'+
         '</div>'+
         '<button data-rm="'+i+'" style="background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:18px;line-height:1;">×</button>'+
-      '</div>'
-    ).join('');
+      '</div>';
+    }).join('');
     list.querySelectorAll('[data-rm]').forEach(b=> b.onclick=()=>{ const c=loadCart(); c.splice(Number(b.dataset.rm),1); saveCart(c); renderCart(); });
   }
 
@@ -328,6 +346,7 @@
     $('payErr').textContent='';
     const sport=$('fSport').value.trim();
     if(!sport) return errMsg('What sport do they play?');
+    if(totalQty() < 1) return errMsg('Pick at least one size.');
     if(uploading) return errMsg('Hold on — photo is still uploading.');
     if(!photoPath) return errMsg('Upload their sports photo first.');
     function errMsg(m){ $('payErr').textContent=m; return null; }
@@ -336,15 +355,16 @@
     cart.push({
       styleKey: STYLE_KEY, garmentType:'tshirt',
       garmentColor: document.querySelector('#colorRow .dot.active').dataset.color,
-      garmentSize: document.querySelector('#sizeRow .chip.active').dataset.size,
-      sport, sourcePhotoPath: photoPath, quantity: qty,
-      thumb: $('filePreview').src && $('filePreview').src.startsWith('data:') ? '' : '',
+      sizes: Object.assign({}, sizeQty),     // {YM:1, L:2}
+      sport, sourcePhotoPath: photoPath,
     });
     saveCart(cart);
     // reset the form for the next design
-    photoPath=null; $('fSport').value=''; $('filePreview').style.display='none';
+    photoPath=null; sizeQty={}; $('fSport').value=''; $('filePreview').style.display='none';
+    syncChips();
     $('dzText').innerHTML='<b style="font-weight:600;">Upload their photo</b><br><span style="font-size:12px;color:var(--gray-400);">Action shots work great · JPG, PNG, WEBP, HEIC</span>';
     $('uploadBar').style.display='none';
+    refresh();
     renderCart();
     $('cartWrap').scrollIntoView({behavior:'smooth', block:'nearest'});
   }
@@ -363,7 +383,7 @@
       const r = await fetch('/api/create-group-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ customerEmail: email, designs: cart.map(d=>({
           styleKey:d.styleKey, garmentType:d.garmentType, garmentColor:d.garmentColor,
-          garmentSize:d.garmentSize, sport:d.sport, sourcePhotoPath:d.sourcePhotoPath, quantity:d.quantity,
+          sizes:d.sizes, sport:d.sport, sourcePhotoPath:d.sourcePhotoPath,
         })) })});
       const j = await r.json(); if(!r.ok) throw new Error(j.error||'Checkout failed');
       sessionStorage.removeItem(CART_KEY);   // clear cart on successful handoff

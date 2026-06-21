@@ -1,38 +1,46 @@
-/* OpenAI image generation provider (GPT-Image).
-   Activates only when GENERATION_PROVIDER=openai and OPENAI_API_KEY is set.
-   Uses the Images API. Returns a raw PNG buffer (no text). */
+/* OpenAI image-to-image provider (GPT Image family).
+   Activates when GENERATION_PROVIDER=openai and OPENAI_API_KEY is set.
 
-const DEFAULT_MODEL = 'gpt-image-1';
+   Uses the IMAGE EDITS endpoint (/v1/images/edits) so the customer's
+   uploaded photo is transformed into the illustration — NOT a random
+   generation. The source photo is sent as multipart form-data.
 
-// Rough cost estimate per image for margin tracking (cents).
-// Tune to your actual plan/size. 1024x1024 standard ~ a few cents.
-const COST_CENTS = Number(process.env.OPENAI_IMAGE_COST_CENTS || 4);
+   Model is set by OPENAI_IMAGE_MODEL (e.g. 'gpt-image-1', 'gpt-image-1.5',
+   'gpt-image-2', etc.) so you can pick whatever your account supports
+   without a code change. Returns a raw PNG buffer (no text overlay). */
+
+const DEFAULT_MODEL = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1';
+const COST_CENTS = Number(process.env.OPENAI_IMAGE_COST_CENTS || 5);
+const SIZE = process.env.OPENAI_IMAGE_SIZE || '1024x1024';
 
 module.exports = {
   defaultModel: DEFAULT_MODEL,
-  async generate({ prompt, model, signal }) {
+  async generate({ prompt, model, sourceImageBuffer, signal }) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) throw new Error('OPENAI_API_KEY is not set');
+    if (!sourceImageBuffer) throw new Error('No source photo provided for image-to-image generation');
 
-    const res = await fetch('https://api.openai.com/v1/images/generations', {
+    const useModel = model || DEFAULT_MODEL;
+
+    // Build multipart form: image[] (the customer photo) + prompt + model.
+    const form = new FormData();
+    const blob = new Blob([sourceImageBuffer], { type: 'image/png' });
+    form.append('image[]', blob, 'source.png');
+    form.append('prompt', prompt);
+    form.append('model', useModel);
+    form.append('n', '1');
+    form.append('size', SIZE);
+
+    const res = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: model || DEFAULT_MODEL,
-        prompt,
-        n: 1,
-        size: '1024x1024',
-        // gpt-image-1 returns b64 by default in `data[].b64_json`
-      }),
+      headers: { 'Authorization': `Bearer ${apiKey}` }, // no Content-Type: fetch sets the multipart boundary
+      body: form,
       signal,
     });
 
     if (!res.ok) {
       const detail = await res.text().catch(() => '');
-      throw new Error(`OpenAI image error ${res.status}: ${detail.slice(0, 500)}`);
+      throw new Error(`OpenAI edits error ${res.status}: ${detail.slice(0, 600)}`);
     }
 
     const json = await res.json();
@@ -40,10 +48,10 @@ module.exports = {
     if (!b64) throw new Error('OpenAI returned no image data');
 
     return {
-      model: model || DEFAULT_MODEL,
+      model: useModel,
       imageBuffer: Buffer.from(b64, 'base64'),
       mimeType: 'image/png',
       costCents: COST_CENTS,
     };
-  }
+  },
 };

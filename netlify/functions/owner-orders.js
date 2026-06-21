@@ -15,7 +15,7 @@ exports.handler = async (event) => {
 
   const { data: orders, error } = await supa()
     .from('orders')
-    .select('id, created_at, athlete_name, customer_email, style_key, status, paid, total_cents, quantity, regen_count, regen_limit, refunded_at, access_token, wants_text, final_name, final_school, final_number, final_print_path, finalized_at')
+    .select('id, created_at, athlete_name, customer_email, style_key, status, paid, total_cents, quantity, regen_count, regen_limit, refunded_at, access_token, wants_text, final_name, final_school, final_number, final_print_path, finalized_at, sizes, garment_size')
     .order('created_at', { ascending: false })
     .limit(limit);
   if (error) return json(500, { error: error.message });
@@ -31,6 +31,7 @@ exports.handler = async (event) => {
     paid: o.paid,
     total_cents: o.total_cents,
     quantity: o.quantity,
+    sizes: o.sizes || (o.garment_size ? { [o.garment_size]: o.quantity } : null),
     regen_count: o.regen_count,
     regen_limit: o.regen_limit,
     refunded: !!o.refunded_at,

@@ -34,18 +34,32 @@ exports.handler = async (event) => {
     return json(400, { error: 'Too many designs in one order' });
 
   // ---- Validate each design ----
+  const VALID_SIZES = ['YS','YM','YL','S','M','L','XL','2XL'];
   const clean = [];
   for (let i = 0; i < designs.length; i++) {
     const d = designs[i] || {};
     const style = getStyle(d.styleKey);
     if (!style || !style.enabled) return json(400, { error: `Design ${i + 1}: invalid style` });
     if (!d.sourcePhotoPath) return json(400, { error: `Design ${i + 1}: photo is required` });
-    const qty = Math.max(1, Math.min(50, parseInt(d.quantity, 10) || 1));
+
+    // Sizes breakdown: { M:1, L:2 }. Sanitize + total it.
+    const sizes = {};
+    let qty = 0;
+    const raw = (d.sizes && typeof d.sizes === 'object') ? d.sizes
+      : (d.garmentSize ? { [d.garmentSize]: parseInt(d.quantity, 10) || 1 } : {});
+    for (const [sz, n] of Object.entries(raw)) {
+      if (!VALID_SIZES.includes(sz)) continue;
+      const c = Math.max(0, Math.min(50, parseInt(n, 10) || 0));
+      if (c > 0) { sizes[sz] = c; qty += c; }
+    }
+    if (qty < 1) return json(400, { error: `Design ${i + 1}: pick at least one size` });
+
     clean.push({
       styleKey: d.styleKey,
       garmentType: d.garmentType || 'tshirt',
       garmentColor: d.garmentColor || null,
-      garmentSize: d.garmentSize || null,
+      sizes,
+      garmentSize: Object.keys(sizes).join(','),   // human-readable summary
       sport: (d.sport || '').toString().slice(0, 24),
       sourcePhotoPath: d.sourcePhotoPath,
       quantity: qty,
@@ -54,7 +68,7 @@ exports.handler = async (event) => {
   }
 
   // ---- Price: bulk tiers apply across the WHOLE group's shirt count ----
-  // (A family ordering 2 different designs = 2 shirts => 2-3 tier.)
+  // (A family ordering the same design in 3 sizes = 3 shirts => 2-3 tier.)
   const totalQty = clean.reduce((s, d) => s + d.quantity, 0);
   for (const d of clean) {
     d.unitCents = unitPriceCents(d.garmentType, totalQty);  // tier by group size
@@ -83,6 +97,7 @@ exports.handler = async (event) => {
       garment_type: d.garmentType,
       garment_color: d.garmentColor,
       garment_size: d.garmentSize,
+      sizes: d.sizes,
       sport: d.sport,
       source_photo_path: d.sourcePhotoPath,
       quantity: d.quantity,
@@ -102,7 +117,7 @@ exports.handler = async (event) => {
         unit_amount: d.unitCents,
         product_data: {
           name: `Drafted Apparel — ${d.styleName}`,
-          description: `Custom illustrated ${d.garmentType}`,
+          description: `Custom illustrated ${d.garmentType} — ${Object.entries(d.sizes).map(([s,n])=>s+'×'+n).join(', ')}`,
         },
       },
     }));

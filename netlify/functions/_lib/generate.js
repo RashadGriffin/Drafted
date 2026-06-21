@@ -10,6 +10,7 @@
    =========================================================== */
 
 const { getStyle, buildPrompt } = require('../../../config/styles.js');
+const { downloadBuffer, BUCKETS } = require('./supabase.js');
 
 // Provider registry. Add new providers here; nothing else changes.
 const providers = {
@@ -57,6 +58,17 @@ async function generateIllustration(order, opts = {}) {
   const prompt = buildPrompt(style, order);
   const model = style.model || provider.defaultModel || 'default';
 
+  // For image-to-image providers, fetch the customer's uploaded photo so the
+  // provider can transform THEIR athlete (not generate a random one).
+  let sourceImageBuffer = null;
+  if (order.source_photo_path) {
+    try {
+      sourceImageBuffer = await downloadBuffer(BUCKETS.source, order.source_photo_path);
+    } catch (e) {
+      throw new Error(`Could not load source photo (${order.source_photo_path}): ${e.message}`);
+    }
+  }
+
   const started = Date.now();
   const result = await provider.generate({
     prompt,
@@ -64,6 +76,7 @@ async function generateIllustration(order, opts = {}) {
     model,
     style,
     order,
+    sourceImageBuffer,
     signal: opts.signal,
   });
 
