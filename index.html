@@ -317,13 +317,13 @@
         const grid = document.getElementById('productGrid');
         const glyphs = ['S','P','C'];
         grid.innerHTML = data.products.map((p, i) => `
-          <a href="${p.link||'#'}" class="product-card reveal ${i===1?'d1':i===2?'d2':''}">
+          <a href="${p.href||p.link||'#'}" class="product-card reveal ${i===1?'d1':i===2?'d2':''}">
             <div class="product-img">
               ${p.image ? `<div class="bg" style="background-image:url('${p.image}')"></div>` : `<div class="product-img-glyph">${glyphs[i]||''}</div>`}
               <div class="quick-shop">Quick Shop</div>
             </div>
             <div class="product-name">${p.name||''}</div>
-            <div class="product-desc">${p.desc||''}</div>
+            <div class="product-desc">${p.description||p.desc||''}</div>
             <div class="product-price">${p.price||''}</div>
           </a>`).join('');
         bindReveal();

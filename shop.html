@@ -14,7 +14,8 @@
   .shop-hero p { font-size:15px; color:var(--gray-600); margin-top:14px; max-width:430px; }
   .grid { max-width:1280px; margin:0 auto; padding:0 32px 100px; display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
   .pcard { text-decoration:none; color:var(--black); display:block; }
-  .pimg { aspect-ratio:1/1.15; position:relative; }
+  .pimg { aspect-ratio:1/1; position:relative; max-height:420px; overflow:hidden; background:var(--gray-100); }
+  .pimg .zoom-inner { width:100%; height:100%; background-position:center; }
   .pimg .glyph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:190px; color:rgba(17,17,17,.05); user-select:none; }
   .quick { position:absolute; bottom:12px; left:50%; transform:translateX(-50%) translateY(8px); opacity:0; background:#fff; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:9px 22px; box-shadow:0 2px 14px rgba(0,0,0,.12); transition:all .25s; white-space:nowrap; }
   .pcard:hover .quick { opacity:1; transform:translateX(-50%) translateY(0); }
@@ -22,7 +23,8 @@
   .pname { font-size:15px; font-weight:600; }
   .pdesc { font-size:13px; color:var(--gray-600); margin:3px 0 6px; line-height:1.5; }
   .pprice { font-size:14px; font-weight:500; }
-  @media (max-width:960px){ .shop-hero{padding:52px 20px 30px;} .grid{grid-template-columns:1fr;padding:0 20px 70px;} }
+  @media (max-width:960px){ .shop-hero{padding:52px 20px 30px;} .grid{grid-template-columns:repeat(2,1fr);padding:0 20px 70px;gap:16px;} .pimg{max-height:none;} }
+  @media (max-width:560px){ .grid{grid-template-columns:1fr;} .pimg{aspect-ratio:1/1;max-height:360px;} }
 </style>
 </head>
 <body>

@@ -15,8 +15,28 @@
 
 const Stripe = require('stripe');
 const { supa } = require('./_lib/supabase.js');
-const { runGeneration } = require('./_lib/runGeneration.js');
-const { sendEmail } = require('./_lib/email.js');
+
+// Fire-and-forget POST to the background generation function. We don't await
+// the result (it can run up to 15 min); we just need the 202 that it was
+// queued. Failure to enqueue is logged but never blocks the webhook response.
+async function invokeBackground(site, payload) {
+  try {
+    const url = `${site}/.netlify/functions/generate-background`;
+    // Don't await the full response body; just kick it off. A short timeout
+    // guards against the rare case the invoke hangs.
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 3000);
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    }).catch(() => {});
+    clearTimeout(t);
+  } catch (e) {
+    console.error('[webhook] failed to enqueue background generation', e.message);
+  }
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
@@ -68,18 +88,15 @@ exports.handler = async (event) => {
             status: 'paid',
           }).eq('id', o.id);
         }
-        // Generate sequentially so we stay within resource limits.
-        for (const o of (orders || [])) {
-          try { await runGeneration(o.id, { trigger: 'initial' }); }
-          catch (genErr) { console.error('Generation error for order', o.id, genErr.message); }
-        }
 
-        // One email with the group proof link.
-        try {
-          await sendEmail({ to: group.customer_email, subject: 'Your Drafted proofs are ready 🔥',
-            html: `<p>Your custom illustration${(orders||[]).length>1?'s are':' is'} ready to review:</p>
-              <p><a href="${site}/proof.html?token=${group.access_token}">View your proof${(orders||[]).length>1?'s':''}</a></p>` });
-        } catch (e) { console.error('Email error (group)', e.message); }
+        // Hand generation off to the background function (up to 15 min) so we
+        // don't block the webhook (Stripe needs a fast response, and real
+        // OpenAI generation exceeds the 60s function cap). Fire-and-forget.
+        await invokeBackground(site, {
+          orderIds: (orders || []).map(o => o.id),
+          groupToken: group.access_token,
+          email: group.customer_email,
+        });
 
         return { statusCode: 200, body: 'ok' };
       }
@@ -99,15 +116,12 @@ exports.handler = async (event) => {
         status: 'paid',
       }).eq('id', orderId);
 
-      try {
-        await runGeneration(orderId, { trigger: 'initial' });
-        await sendEmail({ to: order.customer_email, subject: 'Your Drafted proof is ready 🔥',
-          html: `<p>Your custom illustration is ready to review:</p>
-            <p><a href="${site}/proof.html?token=${order.access_token}">View your proof</a></p>
-            <p>Approve it, or regenerate up to ${order.regen_limit} times free.</p>` });
-      } catch (genErr) {
-        console.error('Generation error for order', orderId, genErr.message);
-      }
+      await invokeBackground(site, {
+        orderIds: [orderId],
+        singleToken: order.access_token,
+        email: order.customer_email,
+        regenLimit: order.regen_limit,
+      });
 
       return { statusCode: 200, body: 'ok' };
     }
