@@ -69,6 +69,19 @@ async function generateIllustration(order, opts = {}) {
     }
   }
 
+  // Optional per-style illustration reference (STYLE guidance only — never the
+  // subject). Lives in a private Supabase bucket; loaded like the customer photo,
+  // and appended AFTER it by the provider so the customer's face always wins.
+  let styleReferenceBuffer = null;
+  if (style.styleReference) {
+    try {
+      styleReferenceBuffer = await downloadBuffer(BUCKETS.styleRefs, style.styleReference);
+    } catch (e) {
+      // Non-fatal: if the reference can't load, fall back to text-only styling.
+      console.error(`Style reference load failed (${style.styleReference}): ${e.message}`);
+    }
+  }
+
   const started = Date.now();
   const result = await provider.generate({
     prompt,
@@ -77,6 +90,7 @@ async function generateIllustration(order, opts = {}) {
     style,
     order,
     sourceImageBuffer,
+    styleReferenceBuffer,
     signal: opts.signal,
   });
 

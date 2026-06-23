@@ -15,7 +15,7 @@ const SIZE = process.env.OPENAI_IMAGE_SIZE || '1024x1024';
 
 module.exports = {
   defaultModel: DEFAULT_MODEL,
-  async generate({ prompt, model, sourceImageBuffer, signal }) {
+  async generate({ prompt, model, sourceImageBuffer, styleReferenceBuffer, signal }) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) throw new Error('OPENAI_API_KEY is not set');
     if (!sourceImageBuffer) throw new Error('No source photo provided for image-to-image generation');
@@ -24,8 +24,16 @@ module.exports = {
 
     // Build multipart form: image[] (the customer photo) + prompt + model.
     const form = new FormData();
+    // The customer photo MUST be first — the edits endpoint preserves the most
+    // facial detail/texture from the first image in the list.
     const blob = new Blob([sourceImageBuffer], { type: 'image/png' });
     form.append('image[]', blob, 'source.png');
+    // Optional style reference (image 2) — style guidance ONLY, appended AFTER the
+    // customer photo so it can never override the customer's face.
+    if (styleReferenceBuffer) {
+      const refBlob = new Blob([styleReferenceBuffer], { type: 'image/png' });
+      form.append('image[]', refBlob, 'style-reference.png');
+    }
     form.append('prompt', prompt);
     form.append('model', useModel);
     form.append('n', '1');

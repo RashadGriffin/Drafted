@@ -20,7 +20,7 @@ function supa() {
 }
 
 // ---- Storage helpers (private buckets + signed URLs) ----
-const BUCKETS = { source: 'source-photos', proofs: 'proofs', print: 'print-files' };
+const BUCKETS = { source: 'source-photos', proofs: 'proofs', print: 'print-files', styleRefs: 'style-refs' };
 
 async function uploadBuffer(bucket, path, buffer, contentType) {
   const { error } = await supa().storage.from(bucket).upload(path, buffer, {

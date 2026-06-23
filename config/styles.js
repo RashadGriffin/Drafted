@@ -128,15 +128,16 @@ const STYLES = {
 
     provider: null,
     model: null,
+    styleReference: 'big-head.png',
 
     promptTemplate:
-      "Transform the person in the uploaded photo into a clean 2D comic-style illustration with a modern arcade-game \"big head mode\" look. This must remain clearly recognizable as the SAME person in the photo. " +
-      "Preserve exactly, from the photo: the person's facial identity and structure (jawline, cheekbones, chin, nose, mouth, eyes), skin tone, age, hairstyle, expression, pose, and body proportions. Reproduce the actual clothing and any objects they are wearing or holding, including the real colors and any text, logo, number, or design genuinely visible on their outfit — exactly as shown. " +
-      "Apply the big-head transform: enlarge the head for a fun exaggerated arcade look while keeping the body smaller and proportional. Keep the neck anatomically correct — do not enlarge, swell, stretch, or distort it; keep a smooth jaw-to-neck-to-shoulders transition. " +
-      "Keep the face realistic and mature: preserve natural facial structure and avoid baby-like, chibi, toddler, or overly-soft proportions. Do not oversize the eyes, round the cheeks, or bulge the forehead. Keep features at realistic teen/adult proportions. " +
-      "Style: bold clean outlines, smooth cel shading, crisp edges, simplified detail, clean graphic shapes. Premium, apparel-ready, easy to read. Reduce photographic texture and noise; keep the face recognizable with smooth contour transitions. Do not pixelate the face. " +
-      "CRITICAL — do not invent anything that is not in the photo. Do not add or alter clothing; do not add a jersey, uniform, team, league, sport, logo, number, lettering, equipment, props, or background scene that is not actually present in the original photo. If the person is not wearing a uniform, do not give them one. Render only what is truly there, restyled. " +
-      "Transparent background. No background. No added text beyond text genuinely visible on the person's own clothing. No extra graphics, borders, frames, or random effects. Print-ready apparel illustration.",
+      "You are given TWO input images. IMAGE 1 is the PERSON to illustrate. IMAGE 2 is a STYLE EXAMPLE showing the target art style only. Draw the PERSON from IMAGE 1 in the ART STYLE of IMAGE 2. " +
+      "From IMAGE 1, take ALL subject content and preserve it exactly: the person's facial identity and structure (jawline, cheekbones, chin, nose, mouth, eyes), skin tone, age, hairstyle, expression, their actual clothing and anything they are wearing or holding (including real colors and any text, logo, number, or design genuinely visible on their outfit), their pose, and their framing/crop. The output must be unmistakably the SAME person from IMAGE 1. " +
+      "From IMAGE 2, copy ONLY the art style: clean bold black outlines, smooth airbrushed cel shading with soft gradients and glossy highlights, subtle rim lighting, rich saturated color, a premium polished comic finish, and the exaggerated big-head proportion (head enlarged, body smaller and athletic). " +
+      "CRITICAL — IMAGE 2 is a style sample, NOT the subject. Do NOT copy any of its content: not its face, not its baseball uniform, jersey, cap, team name, lettering, bat, or sports equipment, not its colors, not its pose, not its background. None of that may appear in the output unless it is actually present in IMAGE 1. If IMAGE 1 has no uniform, the output must have no uniform, no jersey, no team, no number, and no sports gear. " +
+      "Big-head transform: enlarge the head for the fun arcade caricature look while keeping the body smaller and proportional. Keep the neck anatomically correct — do not enlarge, swell, stretch, or distort it; keep a smooth jaw-to-neck-to-shoulders transition. Keep the face realistic and mature with the person's natural structure; avoid baby, chibi, toddler, or overly-soft proportions, oversized eyes, round cheeks, or a bulbous forehead. Render the face as a clean, accurate, flattering likeness of THIS specific person. " +
+      "Do not invent or add any clothing, uniform, team, league, sport, logo, number, lettering, equipment, prop, or background scene that is not actually present in IMAGE 1. Restyle only what is truly there. " +
+      "Transparent background. No background. No added text beyond text genuinely visible on the person's own clothing in IMAGE 1. No borders, no frame, no random effects. Print-ready apparel illustration.",
 
     negativePrompt:
       "invented uniform, fabricated jersey, made-up team name, made-up jersey number, added sports equipment not in the photo, changed or replaced clothing, " +
