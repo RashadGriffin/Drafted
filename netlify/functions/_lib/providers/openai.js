@@ -31,6 +31,13 @@ module.exports = {
     form.append('n', '1');
     form.append('size', SIZE);
 
+    // High input fidelity preserves face/likeness + real outfit detail on /edits.
+    // Supported on gpt-image-1 and gpt-image-1.5 (NOT -mini; gpt-image-2 runs
+    // high-fidelity automatically and rejects the param).
+    if (/^gpt-image-1(\.5)?$/.test(useModel)) {
+      form.append('input_fidelity', 'high');
+    }
+
     const res = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${apiKey}` }, // no Content-Type: fetch sets the multipart boundary

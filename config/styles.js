@@ -130,21 +130,18 @@ const STYLES = {
     model: null,
 
     promptTemplate:
-      "Transform the subject in the uploaded photo into a clean 2D comic-style sports illustration with a modern arcade-game feel. " +
-      "Preserve the subject's facial identity, expression, hairstyle, pose, uniform, sports gear, and body proportions. " +
-      "Create a stylized \"big head mode\" character design inspired by classic arcade sports games, with the head intentionally enlarged for a fun exaggerated look, while keeping the body smaller and athletic. " +
-      "Important: keep the head enlargement clean and natural. The neck must remain anatomically correct and should not enlarge with the head. Maintain a smooth, believable transition from jaw to neck to shoulders. Do not make the neck oversized, swollen, stretched, or distorted. " +
-      "Keep the face more realistic and mature-looking. Preserve the subject's natural facial structure, including jawline, cheekbones, chin shape, nose shape, and mouth shape. Avoid baby-like, chibi-like, or toddler-like facial proportions. " +
-      "The head should be enlarged, but the facial features should remain closer to realistic teen or adult proportions. Do not make the eyes oversized, the cheeks overly round, the forehead excessively bulbous, or the face overly soft and childlike. " +
-      "Use bold outlines, smooth cel shading, crisp edges, simplified details, and clean graphic shapes. Keep the illustration premium, apparel-ready, and easy to read. " +
-      "Keep the face recognizable and clean. Use slightly more realistic facial rendering with defined structure and less exaggerated cuteness. Do not fully pixelate the face. Use simplified facial detail with smooth contour transitions and controlled shading. " +
-      "Maintain accurate uniform colors and major uniform details. Preserve important jersey elements exactly, including the team name or major chest lettering, jersey number, and clearly visible uniform design features. If the uniform contains prominent readable text such as a team name, recreate that text clearly and accurately. Only simplify or omit tiny brand marks, tiny patch text, tiny accessory text, and very small secondary details if needed. " +
-      "Transparent background. No background. No text outside of the original uniform text. No extra graphics. No borders. No frame. No random effects. Print-ready apparel illustration.",
+      "Transform the person in the uploaded photo into a clean 2D comic-style illustration with a modern arcade-game \"big head mode\" look. This must remain clearly recognizable as the SAME person in the photo. " +
+      "Preserve exactly, from the photo: the person's facial identity and structure (jawline, cheekbones, chin, nose, mouth, eyes), skin tone, age, hairstyle, expression, pose, and body proportions. Reproduce the actual clothing and any objects they are wearing or holding, including the real colors and any text, logo, number, or design genuinely visible on their outfit — exactly as shown. " +
+      "Apply the big-head transform: enlarge the head for a fun exaggerated arcade look while keeping the body smaller and proportional. Keep the neck anatomically correct — do not enlarge, swell, stretch, or distort it; keep a smooth jaw-to-neck-to-shoulders transition. " +
+      "Keep the face realistic and mature: preserve natural facial structure and avoid baby-like, chibi, toddler, or overly-soft proportions. Do not oversize the eyes, round the cheeks, or bulge the forehead. Keep features at realistic teen/adult proportions. " +
+      "Style: bold clean outlines, smooth cel shading, crisp edges, simplified detail, clean graphic shapes. Premium, apparel-ready, easy to read. Reduce photographic texture and noise; keep the face recognizable with smooth contour transitions. Do not pixelate the face. " +
+      "CRITICAL — do not invent anything that is not in the photo. Do not add or alter clothing; do not add a jersey, uniform, team, league, sport, logo, number, lettering, equipment, props, or background scene that is not actually present in the original photo. If the person is not wearing a uniform, do not give them one. Render only what is truly there, restyled. " +
+      "Transparent background. No background. No added text beyond text genuinely visible on the person's own clothing. No extra graphics, borders, frames, or random effects. Print-ready apparel illustration.",
 
     negativePrompt:
-      "chibi, baby face, toddler proportions, oversized eyes, swollen neck, stretched neck, distorted neck, " +
-      "bulbous forehead, overly round cheeks, childlike softness, background scenery, frame, border, " +
-      "extra graphics, added text not on the original uniform, watermark, signature",
+      "invented uniform, fabricated jersey, made-up team name, made-up jersey number, added sports equipment not in the photo, changed or replaced clothing, " +
+      "chibi, baby face, toddler proportions, oversized eyes, swollen neck, stretched neck, distorted neck, bulbous forehead, overly round cheeks, childlike softness, " +
+      "background scenery, frame, border, extra graphics, added text not on the original clothing, watermark, signature, busy background, heavy photographic texture",
 
     // Name/number/school still added programmatically after generation.
     // Number overlay off by default — the jersey number from the photo is preserved by the AI.
