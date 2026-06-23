@@ -30,6 +30,8 @@ module.exports = {
     form.append('model', useModel);
     form.append('n', '1');
     form.append('size', SIZE);
+    form.append('quality', 'high');
+    form.append('background', 'transparent');
 
     // High input fidelity preserves face/likeness + real outfit detail on /edits.
     // Supported on gpt-image-1 and gpt-image-1.5 (NOT -mini; gpt-image-2 runs
