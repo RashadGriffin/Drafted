@@ -164,6 +164,11 @@
         <button class="chip" data-fb="Make it cleaner and less busy, with less visual clutter.">Cleaner</button>
         <button class="chip" data-fb="Make it more polished and refined overall.">More polished</button>
       </div>
+      <div class="regen-text" style="margin-top:6px;">
+        <label class="field-label" for="uniformLettering">Name on the uniform not right?</label>
+        <div class="regen-sub" style="margin:4px 0 8px;">If the lettering on the jersey should read differently, type exactly what it says and we'll redo it.</div>
+        <input class="field-input" id="uniformLettering" type="text" maxlength="40" placeholder="e.g. BEARCATS" autocomplete="off">
+      </div>
       <div class="actions" style="margin-top:14px; justify-content:flex-start;">
         <button class="btn-primary" id="btnRegenGo">Regenerate <span class="left" id="regenLeft2"></span></button>
         <button class="btn-ghost-d" id="btnRegenCancel">Cancel</button>
@@ -383,7 +388,7 @@
   // Friendly label for a version: its feedback, or Original / Proof N.
   function versionLabel(h, total){
     if(h.kind === 'manual') return 'Hand-finished';
-    if(h.attemptNo === 1) return 'Original';
+    if(h.attemptNo === 1) return 'Proof 1';
     if(h.feedback){
       let t = h.feedback.replace(/\s+/g,' ').trim();
       if(t.length > 38) t = t.slice(0,36)+'…';
@@ -416,7 +421,7 @@
     if(!sel) return;
     $('proofImg').src = sel.url;
     $('attemptBadge').textContent = sel.kind==='manual' ? 'Hand-Finished'
-      : (sel.attemptNo===1 ? 'Original' : 'Proof '+sel.attemptNo+' of '+total);
+      : ('Proof '+sel.attemptNo+' of '+total);
     $('attemptBadge').classList.toggle('manual', sel.kind==='manual');
   }
 
@@ -631,6 +636,10 @@
   function collectFeedback(){
     const picked = [].slice.call(document.querySelectorAll('#regenChips .chip.on'))
       .map(c => c.getAttribute('data-fb'));
+    const lettering = ($('uniformLettering') ? $('uniformLettering').value : '').replace(/[\r\n]+/g,' ').trim();
+    if(lettering){
+      picked.push('The lettering on the jersey reads exactly "' + lettering + '". Render that exact text on the jersey chest, matching the jersey\'s existing style, color, and placement, with correct spelling. Do not add any team, school, or program name anywhere on the jersey.');
+    }
     return picked.join(' ');
   }
 
@@ -653,6 +662,7 @@
     // reset chips after submitting so the next round starts clean
     const fb = collectFeedback();
     document.querySelectorAll('#regenChips .chip.on').forEach(c=>c.classList.remove('on'));
+    if($('uniformLettering')) $('uniformLettering').value='';
     updateRegenCount();
     doRegenerate(fb);
   });
